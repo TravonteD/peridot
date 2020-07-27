@@ -17,8 +17,7 @@ module Peridot::UI
 
   # Represents a termbox container used as a window within the UI
   struct Window
-    property :title
-    getter :container
+    getter container : Termbox::Container
 
     def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
       @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
@@ -41,7 +40,7 @@ module Peridot::UI
       end
     end
 
-    private def add_title(title : String)
+    def add_title(title : String)
       write_line(title, 0)
     end
   end
