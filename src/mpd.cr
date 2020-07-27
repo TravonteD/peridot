@@ -8,16 +8,44 @@ struct Peridot::MPD
     @queue = Queue.new(@connection)
   end
 
-  def play
+  def play : Void
     LibMpdClient.mpd_run_play(@connection)
   end
 
-  def pause
+  def pause : Void
     LibMpdClient.mpd_run_pause(@connection)
   end
 
-  def toggle_pause
+  def toggle_pause : Void
     LibMpdClient.mpd_run_toggle_pause(@connection)
+  end
+
+  def stop : Void
+    LibMpdClient.mpd_run_stop(@connection)
+  end
+
+  def next : Void
+    LibMpdClient.mpd_run_next(@connection)
+  end
+
+  def previous : Void
+    LibMpdClient.mpd_run_previous(@connection)
+  end
+
+  def repeat : Void
+    LibMpdClient.mpd_run_repeat(self.status)
+  end
+
+  def random : Void
+    LibMpdClient.mpd_run_random(self.status)
+  end
+
+  def single : Void
+    LibMpdClient.mpd_run_single(self.status)
+  end
+
+  def consume : Void
+    LibMpdClient.mpd_run_consume(self.status)
   end
 
   def state : String | Nil
