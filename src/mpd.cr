@@ -8,6 +8,18 @@ struct Peridot::MPD
     @queue = Queue.new(@connection)
   end
 
+  def play
+    LibMpdClient.mpd_run_play(@connection)
+  end
+
+  def pause
+    LibMpdClient.mpd_run_pause(@connection)
+  end
+
+  def toggle_pause
+    LibMpdClient.mpd_run_toggle_pause(@connection)
+  end
+
   def state : String | Nil
     case LibMpdClient.mpd_status_get_state(self.status)
     when LibMpdClient::MpdState::MPD_STATE_PLAY
