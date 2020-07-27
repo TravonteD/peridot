@@ -22,6 +22,38 @@ struct Peridot::MPD
     end
   end
 
+  def volume 
+    LibMpdClient.mpd_status_get_volume(self.status)
+  end
+
+  def repeat 
+    LibMpdClient.mpd_status_get_repeat(self.status)
+  end
+
+  def random 
+    LibMpdClient.mpd_status_get_random(self.status)
+  end
+
+  def single 
+    LibMpdClient.mpd_status_get_single(self.status)
+  end
+
+  def consume 
+    LibMpdClient.mpd_status_get_consume(self.status)
+  end
+
+  def elapsed_time 
+    LibMpdClient.mpd_status_get_elapsed_time(self.status)
+  end
+
+  def total_time 
+    LibMpdClient.mpd_status_get_total_time(self.status)
+  end
+
+  def bit_rate 
+    LibMpdClient.mpd_status_get_bit_rate(self.status)
+  end
+
   private def status
     LibMpdClient.mpd_run_status(@connection)
   end
