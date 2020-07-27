@@ -21,7 +21,8 @@ module Peridot::UI
 
     def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
       @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
-      @container << Border.new(container)
+      @border = Border.new(container)
+      @container << @border
       add_title(title)
     end
 
@@ -42,6 +43,14 @@ module Peridot::UI
 
     def add_title(title : String)
       write_line(title, 0)
+    end
+
+    def select
+      @border.foreground = 2
+    end
+
+    def deselect
+      @border.foreground = 8
     end
   end
 end
