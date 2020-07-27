@@ -18,7 +18,7 @@ begin
   main_window << playlist_window.container
 
   # Status Window
-  status_window_title "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
+  status_title = "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
   status_window = Peridot::UI::Window.new(status_title, {x: 1, y: main_window.height - 5, w: status_width, h: status_height})
   if current_song = mpd.current_song
     stats = [ current_song.title, "#{current_song.album}, #{current_song.artist}" ]
