@@ -1,0 +1,13 @@
+name: peridot
+version: 0.1.0
+
+authors:
+  - your-name-here <your-email-here>
+
+targets:
+  peridot:
+    main: src/peridot.cr
+
+crystal: 0.35.1
+
+license: MIT
