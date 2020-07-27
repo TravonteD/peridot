@@ -9,8 +9,10 @@ targets:
     main: src/peridot.cr
 
 dependencies:
-  libmpdclient-crystal:
+  libmpdclient:
     github: travonted/libmpdclient-crystal
+  termbox:
+    github: andrewsuzuki/termbox-crystal
 
 crystal: 0.35.1
 
