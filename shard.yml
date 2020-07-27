@@ -8,6 +8,10 @@ targets:
   peridot:
     main: src/peridot.cr
 
+dependencies:
+  libmpdclient-crystal:
+    github: travonted/libmpdclient-crystal
+
 crystal: 0.35.1
 
 license: MIT
