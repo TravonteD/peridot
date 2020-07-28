@@ -2,10 +2,13 @@ require "libmpdclient"
 
 struct Peridot::MPD
   getter :queue
+  getter :library
 
   def initialize(host : String, port : Int32)
     @connection = LibMpdClient.mpd_connection_new(host, port, 1000) # Timeout is 1 second for now
     @queue = Queue.new(@connection)
+    @library = Library.new(@connection)
+    @library.init
   end
 
   def now_playing_stats : Array(String)
@@ -211,7 +214,7 @@ struct Peridot::MPD::Library
   getter :songs
   getter :playlists
 
-  def initialize(connection : LibMpdClient::MpdConnection)
+  def initialize(connection : LibMpdClient::MpdConnection*)
     @connection = connection
     @artists = [] of String
     @albums = [] of Tuple(String, String)
@@ -239,7 +242,7 @@ struct Peridot::MPD::Library
           @songs << song
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
           playlist = LibMpdClient.mpd_entity_get_playlist(entity)
-          path = LibMpdClient.mpd_playlist_get_path(playlist)
+          path = String.new(LibMpdClient.mpd_playlist_get_path(playlist))
           @playlists << path
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_UNKNOWN
           Log.warn { "unknown entity received" }
