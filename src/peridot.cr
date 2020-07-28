@@ -2,6 +2,8 @@ require "./ui"
 require "./mpd"
 require "log"
 
+Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
+
 begin
   mpd = Peridot::MPD.new("localhost", 6600)
   main_window = Peridot::UI.init
@@ -12,9 +14,9 @@ begin
   playlist_height = main_window.height - 2 - status_height
 
   # Playlist Window
-  playlist_window = Peridot::UI::Window.new("Queue", {x: 1, y: 1, w: playlist_width, h: playlist_height})
   songs = mpd.queue.songs.map { |x| "#{x.artist} - #{x.title}   #{x.album}" }
   selected_song = 0
+  playlist_window = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", {x: 1, y: 1, w: playlist_width, h: playlist_height})
   playlist_window.write_lines(songs, selected_song)
   main_window << playlist_window.container
 
@@ -55,7 +57,7 @@ begin
         when 'p'
           mpd.toggle_pause
         when 'j'
-          selected_song += 1 unless selected_song == (mpd.queue.length - 1)
+          selected_song += 1 unless selected_song == (songs.size - 1)
         when 'k'
           selected_song -= 1 unless selected_song == 0
         end

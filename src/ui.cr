@@ -44,6 +44,7 @@ module Peridot::UI
     # Note: This will truncate the lines if they extend beyond the containers boundary
     def write_lines(lines : Array(String))
       clear
+
       lines.each.with_index do |line, row|
         write_line(line, row + 1)
         break if row + 1 == @container.height - 2
@@ -52,14 +53,26 @@ module Peridot::UI
 
     # Writes lines with the selected line highlighted
     def write_lines(lines : Array(String), selected_index : Int32)
+
       clear
+
+      max_height = @container.height - 2
+
+      if selected_index > max_height
+        difference = selected_index - max_height + 1
+        # Copy the array before modifying it to prevent side-effects
+        lines = lines.dup 
+        lines.shift(difference)
+        selected_index -= difference
+      end
+
       lines.each.with_index do |line, row|
         if row == selected_index
           write_line(line, row + 1, 2, 0)
         else
           write_line(line, row + 1)
         end
-        break if row + 1 == @container.height - 2
+        break if row + 1 == max_height
       end
     end
 
