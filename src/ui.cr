@@ -23,6 +23,7 @@ module Peridot::UI
       @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
       @border = Border.new(container)
       @container << @border
+      @offset = 0
       add_title(title)
     end
 
@@ -53,20 +54,18 @@ module Peridot::UI
 
     # Writes lines with the selected line highlighted
     def write_lines(lines : Array(String), selected_index : Int32)
-
       clear
 
       max_height = @container.height - 2
-
-      if selected_index > max_height
-        difference = selected_index - max_height + 1
-        # Copy the array before modifying it to prevent side-effects
-        lines = lines.dup 
-        lines.shift(difference)
-        selected_index -= difference
+      if (selected_index - @offset) == max_height
+        @offset += 1
       end
+      if (selected_index - @offset) < 0
+        @offset -= 1 unless @offset == 0
+      end
+      selected_index -= @offset
 
-      lines.each.with_index do |line, row|
+      lines[@offset..].each.with_index do |line, row|
         if row == selected_index
           write_line(line, row + 1, 2, 0)
         else
