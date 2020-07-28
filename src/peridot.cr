@@ -124,28 +124,4 @@ def main
   end
 end
 
-def fetch_library
-  connection = LibMpdClient.mpd_connection_new("localhost", 6600, 1000) # Timeout is 1 second for now
-  if LibMpdClient.mpd_send_list_all_meta(connection, "")
-    while (entity = LibMpdClient.mpd_recv_entity(connection))
-      entity_type = LibMpdClient.mpd_entity_get_type(entity)
-      case entity_type
-      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_DIRECTORY
-        directory = LibMpdClient.mpd_entity_get_directory(entity)
-        path = String.new(LibMpdClient.mpd_directory_get_path(directory))
-      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
-        song = LibMpdClient.mpd_entity_get_song(entity)
-        mpd_song = Peridot::MPD::Song.new(connection, song)
-      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
-        playlist = LibMpdClient.mpd_entity_get_playlist(entity)
-        path = LibMpdClient.mpd_playlist_get_path(playlist)
-      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_UNKNOWN
-        Log.warn{"unknown entity received"}
-      else
-        Log.warn{"invalid entity_type returned"}
-      end
-    end
-  end
-end
-
 main

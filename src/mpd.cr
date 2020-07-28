@@ -12,7 +12,7 @@ struct Peridot::MPD
     if current_song = self.current_song
       [current_song.title, "#{current_song.album}, #{current_song.artist}"]
     else
-       ["nil", "nil"]
+      ["nil", "nil"]
     end
   end
 
@@ -192,15 +192,61 @@ struct Peridot::MPD::Song
 
   private def tag(tag_name : Symbol) : String
     tags = {
-      artist: LibMpdClient::MpdTagType::MPD_TAG_ARTIST,
-      album: LibMpdClient::MpdTagType::MPD_TAG_ALBUM,
+      artist:       LibMpdClient::MpdTagType::MPD_TAG_ARTIST,
+      album:        LibMpdClient::MpdTagType::MPD_TAG_ALBUM,
       album_artist: LibMpdClient::MpdTagType::MPD_TAG_ALBUM_ARTIST,
-      title: LibMpdClient::MpdTagType::MPD_TAG_TITLE,
-      track: LibMpdClient::MpdTagType::MPD_TAG_TRACK,
-      name: LibMpdClient::MpdTagType::MPD_TAG_NAME,
-      genre: LibMpdClient::MpdTagType::MPD_TAG_GENRE,
-      date: LibMpdClient::MpdTagType::MPD_TAG_DATE,
+      title:        LibMpdClient::MpdTagType::MPD_TAG_TITLE,
+      track:        LibMpdClient::MpdTagType::MPD_TAG_TRACK,
+      name:         LibMpdClient::MpdTagType::MPD_TAG_NAME,
+      genre:        LibMpdClient::MpdTagType::MPD_TAG_GENRE,
+      date:         LibMpdClient::MpdTagType::MPD_TAG_DATE,
     }
     String.new(LibMpdClient.mpd_song_get_tag(@song, tags[tag_name], 0))
+  end
+end
+
+struct Peridot::MPD::Library
+  getter :artists
+  getter :albums
+  getter :songs
+  getter :playlists
+
+  def initialize(connection : LibMpdClient::MpdConnection)
+    @connection = connection
+    @artists = [] of String
+    @albums = [] of Tuple(String, String)
+    @songs = [] of LibMpdClient::MpdSong*
+    @playlists = [] of String
+  end
+
+  def init : Void
+    connection = LibMpdClient.mpd_connection_new("localhost", 6600, 1000) # Timeout is 1 second for now
+    if LibMpdClient.mpd_send_list_all_meta(connection, "")
+      while (entity = LibMpdClient.mpd_recv_entity(connection))
+        entity_type = LibMpdClient.mpd_entity_get_type(entity)
+        case entity_type
+        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_DIRECTORY
+          directory = LibMpdClient.mpd_entity_get_directory(entity)
+          path = String.new(LibMpdClient.mpd_directory_get_path(directory))
+          if path.split("/").size == 1
+            @artists << path
+          else
+            artist, album = path.split("/")
+            @albums << {artist, album}
+          end
+        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
+          song = LibMpdClient.mpd_entity_get_song(entity)
+          @songs << song
+        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
+          playlist = LibMpdClient.mpd_entity_get_playlist(entity)
+          path = LibMpdClient.mpd_playlist_get_path(playlist)
+          @playlists << path
+        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_UNKNOWN
+          Log.warn { "unknown entity received" }
+        else
+          Log.warn { "invalid entity_type returned" }
+        end
+      end
+    end
   end
 end
