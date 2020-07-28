@@ -8,6 +8,25 @@ struct Peridot::MPD
     @queue = Queue.new(@connection)
   end
 
+  def now_playing_stats : Array(String)
+    if current_song = self.current_song
+      [current_song.title, "#{current_song.album}, #{current_song.artist}"]
+    else
+       ["nil", "nil"]
+    end
+  end
+
+  def formatted_status : String
+    sprintf("%s (Random: %s | Repeat: %s | Consume: %s  | Single: %s | Volume: %s%%)",
+      self.state.capitalize,
+      self.random? ? "On" : "Off",
+      self.repeat? ? "On" : "Off",
+      self.consume? ? "On" : "Off",
+      self.single? ? "On" : "Off",
+      self.volume,
+    )
+  end
+
   def play : Void
     LibMpdClient.mpd_run_play(@connection)
   end

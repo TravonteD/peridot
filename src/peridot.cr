@@ -4,31 +4,48 @@ require "log"
 
 Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
 
+def format_line_margin(start_string : String, end_string : String, width : Int32) : String
+    margin = " " * (width - (start_string.size + end_string.size) - 2)
+    start_string + margin + end_string
+end
+
+def calculate_window_dimensions(max_width : Int32, max_height : Int32)
+  status_width = playlist_width = max_width - 2
+  status_height = 4
+  playlist_height = max_height - 2 - status_height
+  {
+    playlist: {
+      x: 1,
+      y: 1,
+      w: playlist_width,
+      h: playlist_height
+    },
+    status: {
+      x: 1,
+      y: max_height - status_height - 1,
+      w: status_width,
+      h: status_height
+    }
+  }
+end
+
 begin
   mpd = Peridot::MPD.new("localhost", 6600)
   main_window = Peridot::UI.init
 
   # Dimensions
-  status_width = playlist_width = main_window.width - 2
-  status_height = 4
-  playlist_height = main_window.height - 2 - status_height
+  dimensions = calculate_window_dimensions(main_window.width, main_window.height)
 
   # Playlist Window
-  songs = mpd.queue.songs.map { |x| "#{x.artist} - #{x.title}   #{x.album}" }
+  songs = mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:playlist][:w]) }
   selected_song = 0
-  playlist_window = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", {x: 1, y: 1, w: playlist_width, h: playlist_height})
+  playlist_window = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:playlist])
   playlist_window.write_lines(songs, selected_song)
   main_window << playlist_window.container
 
   # Status Window
-  status_title = "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
-  status_window = Peridot::UI::Window.new(status_title, {x: 1, y: main_window.height - 5, w: status_width, h: status_height})
-  if current_song = mpd.current_song
-    stats = [current_song.title, "#{current_song.album}, #{current_song.artist}"]
-  else
-    stats = ["nil", "nil"]
-  end
-  status_window.write_lines(stats)
+  status_window = Peridot::UI::Window.new(mpd.formatted_status, dimensions[:status])
+  status_window.write_lines(mpd.now_playing_stats)
   main_window << status_window.container
 
   main_window.render
@@ -65,13 +82,8 @@ begin
     end
 
     # Rerender status window
-    status_window.add_title "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
-    if current_song = mpd.current_song
-      stats = [current_song.title, "#{current_song.album}, #{current_song.artist}"]
-    else
-      stats = ["nil", "nil"]
-    end
-    status_window.write_lines(stats)
+    status_window.add_title(mpd.formatted_status)
+    status_window.write_lines(mpd.now_playing_stats)
 
     # Rerender playlist window
     playlist_window.write_lines(songs, selected_song)
