@@ -13,17 +13,18 @@ begin
 
   # Playlist Window
   playlist_window = Peridot::UI::Window.new("Queue", {x: 1, y: 1, w: playlist_width, h: playlist_height})
-  songs = mpd.queue.songs.map { |x| "#{x.artist} - #{x.title}   #{x.album}"}
-  playlist_window.write_lines(songs)
+  songs = mpd.queue.songs.map { |x| "#{x.artist} - #{x.title}   #{x.album}" }
+  selected_song = 0
+  playlist_window.write_lines(songs, selected_song)
   main_window << playlist_window.container
 
   # Status Window
   status_title = "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
   status_window = Peridot::UI::Window.new(status_title, {x: 1, y: main_window.height - 5, w: status_width, h: status_height})
   if current_song = mpd.current_song
-    stats = [ current_song.title, "#{current_song.album}, #{current_song.artist}" ]
+    stats = [current_song.title, "#{current_song.album}, #{current_song.artist}"]
   else
-    stats = [ "nil", "nil" ]
+    stats = ["nil", "nil"]
   end
   status_window.write_lines(stats)
   main_window << status_window.container
@@ -41,6 +42,14 @@ begin
         break
       else
         case ev.ch.chr
+        when 'q'
+          break
+        when '>'
+          mpd.next
+        when '<'
+          mpd.previous
+        when 's'
+          mpd.stop
         when 'p'
           mpd.toggle_pause
         end
@@ -49,9 +58,9 @@ begin
 
     status_window.add_title "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
     if current_song = mpd.current_song
-      stats = [ current_song.title, "#{current_song.album}, #{current_song.artist}" ]
+      stats = [current_song.title, "#{current_song.album}, #{current_song.artist}"]
     else
-      stats = [ "nil", "nil" ]
+      stats = ["nil", "nil"]
     end
     status_window.write_lines(stats)
 
@@ -60,4 +69,3 @@ begin
 ensure
   main_window.shutdown if main_window
 end
-
