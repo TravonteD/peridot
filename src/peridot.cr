@@ -54,9 +54,10 @@ def main
     dimensions = calculate_window_dimensions(main_window.width, main_window.height)
 
     # Library Window
-    categories = ["Songs", "Artists", "Albums"]
+    categories = ["Queue", "Songs", "Artists", "Albums"]
     library_window = Peridot::UI::Window.new("Library", dimensions[:library])
-    library_window.write_lines(categories)
+    library_selected = 0
+    library_window.write_lines(categories, library_selected)
     main_window << library_window.container
 
     # Playlist Window
@@ -65,9 +66,9 @@ def main
 
     # Queue Window
     songs = mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
-    selected_song = 0
+    queue_selected = 0
     queue_window = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue])
-    queue_window.write_lines(songs, selected_song)
+    queue_window.write_lines(songs, queue_selected)
     main_window << queue_window.container
 
     # Status Window
@@ -87,7 +88,7 @@ def main
         when Termbox::KEY_CTRL_C, Termbox::KEY_CTRL_D
           break
         when Termbox::KEY_ENTER
-          mpd.play(mpd.queue.songs[selected_song].id)
+          mpd.play(mpd.queue.songs[queue_selected].id)
         else
           case ev.ch.chr
           when 'q'
@@ -101,9 +102,13 @@ def main
           when 'p'
             mpd.toggle_pause
           when 'j'
-            selected_song += 1 unless selected_song == (songs.size - 1)
+            queue_selected += 1 unless queue_selected == (songs.size - 1)
+            # Rerender queue window
+            queue_window.write_lines(songs, queue_selected)
           when 'k'
-            selected_song -= 1 unless selected_song == 0
+            queue_selected -= 1 unless queue_selected == 0
+            # Rerender queue window
+            queue_window.write_lines(songs, queue_selected)
           end
         end
       end
@@ -112,13 +117,34 @@ def main
       status_window.add_title(mpd.formatted_status)
       status_window.write_lines(mpd.now_playing_stats)
 
-      # Rerender queue window
-      queue_window.write_lines(songs, selected_song)
-
       main_window.render
     end
   ensure
     main_window.shutdown if main_window
+  end
+end
+
+def fetch_library
+  connection = LibMpdClient.mpd_connection_new("localhost", 6600, 1000) # Timeout is 1 second for now
+  if LibMpdClient.mpd_send_list_all_meta(connection, "")
+    while (entity = LibMpdClient.mpd_recv_entity(connection))
+      entity_type = LibMpdClient.mpd_entity_get_type(entity)
+      case entity_type
+      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_DIRECTORY
+        directory = LibMpdClient.mpd_entity_get_directory(entity)
+        path = String.new(LibMpdClient.mpd_directory_get_path(directory))
+      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
+        song = LibMpdClient.mpd_entity_get_song(entity)
+        mpd_song = Peridot::MPD::Song.new(connection, song)
+      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
+        playlist = LibMpdClient.mpd_entity_get_playlist(entity)
+        path = LibMpdClient.mpd_playlist_get_path(playlist)
+      when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_UNKNOWN
+        Log.warn{"unknown entity received"}
+      else
+        Log.warn{"invalid entity_type returned"}
+      end
+    end
   end
 end
 
