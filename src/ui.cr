@@ -3,8 +3,9 @@ require "termbox"
 include Termbox
 
 struct Peridot::UI
-  getter windows
+  getter windows : Hash(Symbol, Window)
   getter songs : Array(String)
+  getter current_window : Symbol | Nil
 
   def initialize(mpd : Peridot::MPD)
     @mpd = mpd
@@ -25,6 +26,16 @@ struct Peridot::UI
 
   def shutdown
     @w.shutdown
+  end
+
+  def select_window(name : Symbol)
+    @windows.each do |k, v|
+      v.deselect
+      v.select if k == name
+      Log.info { k }
+    end
+    @current_window = name
+    Log.info { "Selected window #{@current_window}"}
   end
 
   private def setup_main_window

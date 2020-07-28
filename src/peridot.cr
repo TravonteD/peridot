@@ -19,7 +19,7 @@ def main
     songs = ui.songs
     ui.windows[:queue].write_lines(songs, queue_selected)
     # Start with the queue window active
-    ui.windows[:queue].select
+    ui.select_window(:queue)
 
     # Status Window
     ui.windows[:status].write_lines(mpd.now_playing_stats)
@@ -36,19 +36,15 @@ def main
         when Termbox::KEY_CTRL_C, Termbox::KEY_CTRL_D
           break
         when Termbox::KEY_CTRL_L
-          ui.windows[:queue].deselect
-          ui.windows[:playlist].deselect
-          ui.windows[:library].select
+          ui.select_window(:library)
         when Termbox::KEY_CTRL_Q
-          ui.windows[:library].deselect
-          ui.windows[:playlist].deselect
-          ui.windows[:queue].select
+          ui.select_window(:queue)
         when Termbox::KEY_CTRL_P
-          ui.windows[:library].deselect
-          ui.windows[:queue].deselect
-          ui.windows[:playlist].select
+          ui.select_window(:playlist)
         when Termbox::KEY_ENTER
-          mpd.play(mpd.queue.songs[queue_selected].id)
+          if ui.current_window == :queue
+            mpd.play(mpd.queue.songs[queue_selected].id)
+          end
         else
           case ev.ch.chr
           when 'q'
