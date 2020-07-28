@@ -218,7 +218,7 @@ struct Peridot::MPD::Library
     @connection = connection
     @artists = [] of String
     @albums = [] of Tuple(String, String)
-    @songs = [] of LibMpdClient::MpdSong*
+    @songs = [] of Peridot::MPD::Song
     @playlists = [] of String
   end
 
@@ -239,7 +239,7 @@ struct Peridot::MPD::Library
           end
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
           song = LibMpdClient.mpd_entity_get_song(entity)
-          @songs << song
+          @songs << Peridot::MPD::Song.new(@connection, song)
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
           playlist = LibMpdClient.mpd_entity_get_playlist(entity)
           path = String.new(LibMpdClient.mpd_playlist_get_path(playlist))

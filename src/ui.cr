@@ -16,6 +16,18 @@ class Peridot::UI
     create_child_windows
   end
 
+  def move_down(window_name : Symbol | Nil)
+    return Void unless window_name
+    @windows[window_name].selected_line += 1 unless @windows[window_name].selected_line == (@windows[window_name].lines.size - 1)
+    @windows[window_name].draw
+  end
+
+  def move_up(window_name : Symbol | Nil)
+    return Void unless window_name
+    @windows[window_name].selected_line -= 1 unless @windows[window_name].selected_line == 0
+    @windows[window_name].draw
+  end
+
   def render
     @w.render
   end
@@ -124,7 +136,6 @@ class Peridot::UI::Window
   end
 
   def draw
-    Log.info { @selected_line }
     unless @lines.empty?
       if @selected_line >= 0
         write_lines(@lines, @selected_line)

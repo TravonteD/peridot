@@ -9,13 +9,11 @@ def main
     mpd = Peridot::MPD.new("localhost", 6600)
     ui = Peridot::UI.new(mpd)
 
-    # Library Window
-    ui.windows[:library].selected_line = 0
-    ui.windows[:library].draw
+    # Move to the first line in both windows
+    ui.move_down(:library)
+    ui.move_down(:queue)
+    ui.move_down(:playlist)
 
-    # Queue Window
-    ui.windows[:queue].selected_line = 0
-    ui.windows[:queue].draw
     # Start with the queue window active
     ui.select_window(:queue)
 
@@ -40,8 +38,23 @@ def main
         when Termbox::KEY_CTRL_P
           ui.select_window(:playlist)
         when Termbox::KEY_ENTER
-          if ui.current_window == :queue
+          case ui.current_window
+          when :queue
             mpd.play(mpd.queue.songs[ui.windows[:queue].selected_line].id)
+          when :library
+            selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase
+            case selection
+            when "queue"
+              ui.windows[:queue].lines = ui.songs
+            when "artists"
+              ui.windows[:queue].lines = mpd.library.artists
+            when "albums"
+              ui.windows[:queue].lines = mpd.library.albums.map { |x| x[1] }
+            when "songs"
+              ui.windows[:queue].lines = mpd.library.songs.map { |x| x.title }
+            end
+            ui.windows[:queue].draw
+          else
           end
         else
           case ev.ch.chr
@@ -56,13 +69,9 @@ def main
           when 'p'
             mpd.toggle_pause
           when 'j'
-            ui.windows[:queue].selected_line += 1 unless ui.windows[:queue].selected_line == (ui.songs.size - 1)
-            # Rerender queue window
-            ui.windows[:queue].draw
+            ui.move_down(ui.current_window)
           when 'k'
-            ui.windows[:queue].selected_line -= 1 unless ui.windows[:queue].selected_line == 0
-            # Rerender queue window
-            ui.windows[:queue].draw
+            ui.move_up(ui.current_window)
           end
         end
       end
