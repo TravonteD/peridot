@@ -10,19 +10,17 @@ def main
     ui = Peridot::UI.new(mpd)
 
     # Library Window
-    categories = ["Queue", "Songs", "Artists", "Albums"]
-    library_selected = 0
-    ui.windows[:library].write_lines(categories, library_selected)
+    ui.windows[:library].selected_line = 0
+    ui.windows[:library].draw
 
     # Queue Window
-    queue_selected = 0
-    songs = ui.songs
-    ui.windows[:queue].write_lines(songs, queue_selected)
+    ui.windows[:queue].selected_line = 0
+    ui.windows[:queue].draw
     # Start with the queue window active
     ui.select_window(:queue)
 
     # Status Window
-    ui.windows[:status].write_lines(mpd.now_playing_stats)
+    ui.windows[:status].draw
 
     ui.render
 
@@ -43,7 +41,7 @@ def main
           ui.select_window(:playlist)
         when Termbox::KEY_ENTER
           if ui.current_window == :queue
-            mpd.play(mpd.queue.songs[queue_selected].id)
+            mpd.play(mpd.queue.songs[ui.windows[:queue].selected_line].id)
           end
         else
           case ev.ch.chr
@@ -58,20 +56,20 @@ def main
           when 'p'
             mpd.toggle_pause
           when 'j'
-            queue_selected += 1 unless queue_selected == (songs.size - 1)
+            ui.windows[:queue].selected_line += 1 unless ui.windows[:queue].selected_line == (ui.songs.size - 1)
             # Rerender queue window
-            ui.windows[:queue].write_lines(songs, queue_selected)
+            ui.windows[:queue].draw
           when 'k'
-            queue_selected -= 1 unless queue_selected == 0
+            ui.windows[:queue].selected_line -= 1 unless ui.windows[:queue].selected_line == 0
             # Rerender queue window
-            ui.windows[:queue].write_lines(songs, queue_selected)
+            ui.windows[:queue].draw
           end
         end
       end
 
       # Rerender status window
       ui.windows[:status].add_title(mpd.formatted_status)
-      ui.windows[:status].write_lines(mpd.now_playing_stats)
+      ui.windows[:status].draw
 
       ui.render
     end

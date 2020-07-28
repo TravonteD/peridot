@@ -2,7 +2,7 @@ require "termbox"
 
 include Termbox
 
-struct Peridot::UI
+class Peridot::UI
   getter windows : Hash(Symbol, Window)
   getter songs : Array(String)
   getter current_window : Symbol | Nil
@@ -32,10 +32,8 @@ struct Peridot::UI
     @windows.each do |k, v|
       v.deselect
       v.select if k == name
-      Log.info { k }
     end
     @current_window = name
-    Log.info { "Selected window #{@current_window}"}
   end
 
   private def setup_main_window
@@ -48,10 +46,10 @@ struct Peridot::UI
   private def create_child_windows
     dimensions = calculate_window_dimensions
     @songs = @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
-    @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library])
+    @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library], ["Queue", "Songs", "Artists", "Albums"])
     @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
-    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue])
-    @windows[:status] = Peridot::UI::Window.new(@mpd.formatted_status, dimensions[:status])
+    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue], @songs)
+    @windows[:status] = Peridot::UI::Window.new(@mpd.formatted_status, dimensions[:status], @mpd.now_playing_stats)
     @windows.values.each { |x| @w << x.container }
   end
 
@@ -100,8 +98,10 @@ struct Peridot::UI
 end
 
 # Represents a termbox container used as a window within the UI
-struct Peridot::UI::Window
+class Peridot::UI::Window
   getter container : Termbox::Container
+  property lines : Array(String)
+  property selected_line : Int32
 
   def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
@@ -109,6 +109,29 @@ struct Peridot::UI::Window
     @container << @border
     @offset = 0
     add_title(title)
+    @lines = [] of String
+    @selected_line = -1
+  end
+
+  def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32), lines : Array(String))
+    @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
+    @border = Border.new(container)
+    @container << @border
+    @offset = 0
+    add_title(title)
+    @lines = lines
+    @selected_line = -1
+  end
+
+  def draw
+    Log.info { @selected_line }
+    unless @lines.empty?
+      if @selected_line >= 0
+        write_lines(@lines, @selected_line)
+      else
+        write_lines(@lines)
+      end
+    end
   end
 
   def write_line(text : String, line : Int32)
