@@ -9,23 +9,10 @@ struct Peridot::UI
   def initialize(mpd : Peridot::MPD)
     @mpd = mpd
     @w = Termbox::Window.new
-    @w.set_output_mode(OUTPUT_NORMAL)
-    @w.set_primary_colors(8, 0)
-    @w.clear
-    @w << Border.new(@w)
-
-    dimensions = calculate_window_dimensions
-    @songs = mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
+    @songs = [] of String
     @windows = {} of Symbol => Window
-    @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library])
-    @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
-    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue])
-    @windows[:status] = Peridot::UI::Window.new(@mpd.formatted_status, dimensions[:status])
-    @windows.values.each { |x| @w << x.container }
-  end
-
-  def <<(arg)
-    @w << arg
+    setup_main_window
+    create_child_windows
   end
 
   def render
@@ -40,7 +27,24 @@ struct Peridot::UI
     @w.shutdown
   end
 
-  def calculate_window_dimensions
+  private def setup_main_window
+    @w.set_output_mode(OUTPUT_NORMAL)
+    @w.set_primary_colors(8, 0)
+    @w.clear
+    @w << Border.new(@w)
+  end
+
+  private def create_child_windows
+    dimensions = calculate_window_dimensions
+    @songs = @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
+    @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library])
+    @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
+    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue])
+    @windows[:status] = Peridot::UI::Window.new(@mpd.formatted_status, dimensions[:status])
+    @windows.values.each { |x| @w << x.container }
+  end
+
+  private def calculate_window_dimensions
     max_width = @w.width
     max_height = @w.height
     status_width = queue_width = max_width - 2
