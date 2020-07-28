@@ -77,7 +77,7 @@ module Peridot::UI
 
     def clear
       (0..@container.height).each.with_index do |line, row|
-          write_line((" " * (@container.width - 1)), row + 1)
+          write_line((" " * (@container.width - 2)), row + 1)
           break if row + 1 == @container.height - 2
       end
    end

@@ -40,6 +40,8 @@ begin
       case ev.key
       when Termbox::KEY_CTRL_C, Termbox::KEY_CTRL_D
         break
+      when Termbox::KEY_ENTER
+        mpd.play(mpd.queue.songs[selected_song].id)
       else
         case ev.ch.chr
         when 'q'
@@ -52,10 +54,15 @@ begin
           mpd.stop
         when 'p'
           mpd.toggle_pause
+        when 'j'
+          selected_song += 1 unless selected_song == (mpd.queue.length - 1)
+        when 'k'
+          selected_song -= 1 unless selected_song == 0
         end
       end
     end
 
+    # Rerender status window
     status_window.add_title "#{mpd.state.capitalize} (Random: #{mpd.random? ? "On" : "Off"} | Repeat: #{mpd.repeat? ? "On" : "Off"} | Consume: #{mpd.consume? ? "On" : "Off"} | | Single: #{mpd.single? ? "On" : "Off"} | Volume: #{mpd.volume}%)"
     if current_song = mpd.current_song
       stats = [current_song.title, "#{current_song.album}, #{current_song.artist}"]
@@ -63,6 +70,9 @@ begin
       stats = ["nil", "nil"]
     end
     status_window.write_lines(stats)
+
+    # Rerender playlist window
+    playlist_window.write_lines(songs, selected_song)
 
     main_window.render
   end

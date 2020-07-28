@@ -12,6 +12,10 @@ struct Peridot::MPD
     LibMpdClient.mpd_run_play(@connection)
   end
 
+  def play(id : UInt32) : Void
+    LibMpdClient.mpd_run_play_id(@connection, id)
+  end
+
   def pause : Void
     LibMpdClient.mpd_run_pause(@connection)
   end
