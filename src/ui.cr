@@ -43,6 +43,7 @@ module Peridot::UI
 
     # Note: This will truncate the lines if they extend beyond the containers boundary
     def write_lines(lines : Array(String))
+      clear
       lines.each.with_index do |line, row|
         write_line(line, row + 1)
         break if row + 1 == @container.height - 2
@@ -51,6 +52,7 @@ module Peridot::UI
 
     # Writes lines with the selected line highlighted
     def write_lines(lines : Array(String), selected_index : Int32)
+      clear
       lines.each.with_index do |line, row|
         if row == selected_index
           write_line(line, row + 1, 2, 0)
@@ -72,5 +74,12 @@ module Peridot::UI
     def deselect
       @border.foreground = 8
     end
+
+    def clear
+      (0..@container.height).each.with_index do |line, row|
+          write_line((" " * (@container.width - 1)), row + 1)
+          break if row + 1 == @container.height - 2
+      end
+   end
   end
 end
