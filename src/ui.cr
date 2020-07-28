@@ -33,10 +33,30 @@ module Peridot::UI
       end
     end
 
+    # Writes the line using the given colors
+    def write_line(text : String, line : Int32, fg : Int32, bg : Int32)
+      text.chars.each.with_index do |char, column|
+        @container << Cell.new(char, Position.new(column + 1, line), fg, bg)
+        column += 1
+      end
+    end
+
     # Note: This will truncate the lines if they extend beyond the containers boundary
     def write_lines(lines : Array(String))
       lines.each.with_index do |line, row|
         write_line(line, row + 1)
+        break if row + 1 == @container.height - 2
+      end
+    end
+
+    # Writes lines with the selected line highlighted
+    def write_lines(lines : Array(String), selected_index : Int32)
+      lines.each.with_index do |line, row|
+        if row == selected_index
+          write_line(line, row + 1, 2, 0)
+        else
+          write_line(line, row + 1)
+        end
         break if row + 1 == @container.height - 2
       end
     end
