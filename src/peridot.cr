@@ -48,10 +48,10 @@ def main
               ui.windows[:queue].lines = ui.songs
               ui.windows[:queue].add_title("Queue (#{ui.songs.size} Songs)")
             when "artists"
-              ui.windows[:queue].lines = mpd.library.artists
+              ui.windows[:queue].lines = mpd.library.artists.map { |x| x.name }
               ui.windows[:queue].add_title("Artists")
             when "albums"
-              ui.windows[:queue].lines = mpd.library.albums.map { |x| x[1] }
+              ui.windows[:queue].lines = mpd.library.albums.map { |x| x.name }
               ui.windows[:queue].add_title("Albums")
             when "songs"
               ui.windows[:queue].lines = mpd.library.songs.map { |x| x.title }

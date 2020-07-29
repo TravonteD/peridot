@@ -216,8 +216,8 @@ struct Peridot::MPD::Library
 
   def initialize(connection : LibMpdClient::MpdConnection*)
     @connection = connection
-    @artists = [] of String
-    @albums = [] of Tuple(String, String)
+    @artists = [] of Artist
+    @albums = [] of Album
     @songs = [] of Peridot::MPD::Song
     @playlists = [] of String
   end
@@ -232,10 +232,15 @@ struct Peridot::MPD::Library
           directory = LibMpdClient.mpd_entity_get_directory(entity)
           path = String.new(LibMpdClient.mpd_directory_get_path(directory))
           if path.split("/").size == 1
-            @artists << path
+            @artists << Peridot::MPD::Library::Artist.new(path)
           else
-            artist, album = path.split("/")
-            @albums << {artist, album}
+            artist_name, album_name = path.split("/")
+            if artist = @artists.find { |x| x.name == artist_name }
+              @albums << Peridot::MPD::Library::Album.new(album_name, artist)
+            else
+              artist = Peridot::MPD::Library::Artist.new(artist_name)
+              @albums << Peridot::MPD::Library::Album.new(album_name, artist)
+            end
           end
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
           song = LibMpdClient.mpd_entity_get_song(entity)
@@ -251,5 +256,29 @@ struct Peridot::MPD::Library
         end
       end
     end
+  end
+end
+
+struct Peridot::MPD::Library::Album
+  getter name : String
+  property artist : Artist 
+  property songs : Array(Peridot::MPD::Song)
+
+  def initialize(name : String, artist : Artist)
+    @name = name
+    @artist = artist
+    @songs = [] of Peridot::MPD::Song
+  end
+end
+
+struct Peridot::MPD::Library::Artist
+  getter name : String
+  property albums : Array(Album)
+  property songs : Array(Peridot::MPD::Song)
+
+  def initialize(name : String)
+    @name = name
+    @albums = [] of Album
+    @songs = [] of Peridot::MPD::Song
   end
 end
