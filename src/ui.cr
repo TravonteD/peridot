@@ -58,8 +58,7 @@ class Peridot::UI
     @w.clear
     @w.empty
     @w << @border
-    [:library, :playlist].each { |x| @w << @windows[x].container}
-    @w << @status_window.not_nil!.container
+    [:library, :status, :playlist].each { |x| @w << @windows[x].container }
     @w << @windows[@primary_window.not_nil!].container
     @w.render
   end
@@ -81,7 +80,7 @@ class Peridot::UI
   end
 
   def update_status
-    @status_window.not_nil!.update
+    @windows[:status].update
   end
 
   private def setup_main_window
@@ -96,9 +95,8 @@ class Peridot::UI
     @songs = @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
     @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library], ["Queue", "Songs", "Artists", "Albums"])
     @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
-    @status_window = Peridot::UI::StatusWindow.new(@mpd, dimensions[:status])
+    @windows[:status] = Peridot::UI::StatusWindow.new(@mpd, dimensions[:status])
     @windows.values.each { |x| @w << x.container }
-    @w << @status_window.not_nil!.container
 
     @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue], @songs)
     @primary_window = :queue
@@ -232,16 +230,19 @@ class Peridot::UI::Window
     end
   end
 
-  private def add_title
-    write_line(@title, 0)
-  end
-
   def select
     @border.foreground = 2
   end
 
   def deselect
     @border.foreground = 8
+  end
+
+  def update
+  end
+
+  private def add_title
+    write_line(@title, 0)
   end
 end
 
