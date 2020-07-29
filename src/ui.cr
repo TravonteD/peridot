@@ -45,7 +45,9 @@ class Peridot::UI
     @windows[window_name].draw
   end
 
-  def render
+  def redraw
+    @w.empty
+    @windows.values.each { |x| @w << x.container }
     @w.render
   end
 

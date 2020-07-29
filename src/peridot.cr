@@ -20,7 +20,7 @@ def main
     # Status Window
     ui.windows[:status].draw
 
-    ui.render
+    ui.redraw
 
     # Main Event loop
     loop do
@@ -83,7 +83,7 @@ def main
       ui.windows[:status].add_title(mpd.formatted_status)
       ui.windows[:status].draw
 
-      ui.render
+      ui.redraw
     end
   ensure
     ui.shutdown if ui
