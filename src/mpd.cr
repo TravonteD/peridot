@@ -226,32 +226,10 @@ struct Peridot::MPD::Library
     connection = LibMpdClient.mpd_connection_new("localhost", 6600, 1000) # Timeout is 1 second for now
     if LibMpdClient.mpd_send_list_all_meta(connection, "")
       while (entity = LibMpdClient.mpd_recv_entity(connection))
-        entity_type = LibMpdClient.mpd_entity_get_type(entity)
-        case entity_type
+        case LibMpdClient.mpd_entity_get_type(entity)
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
           song = LibMpdClient.mpd_entity_get_song(entity)
-          song_object = Peridot::MPD::Song.new(@connection, song)
-          artist_name = song_object.artist
-          album_name = song_object.album
-          artist = if @artists.find { |x| x.name == artist_name }
-                     @artists.find { |x| x.name == artist_name }.not_nil!
-                   else
-                     x = Peridot::MPD::Library::Artist.new(artist_name)
-                     @artists << x
-                     x
-                   end
-
-          album = if @albums.find { |x| x.name == album_name }
-                     @albums.find { |x| x.name == album_name }.not_nil!
-                  else
-                    x = Peridot::MPD::Library::Album.new(album_name, artist)
-                    @albums << x
-                    x
-                  end
-
-          artist.songs << song_object
-          album.songs << song_object
-          @songs << song_object
+          import_metadata(Peridot::MPD::Song.new(@connection, song))
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
           playlist = LibMpdClient.mpd_entity_get_playlist(entity)
           path = String.new(LibMpdClient.mpd_playlist_get_path(playlist))
@@ -262,6 +240,37 @@ struct Peridot::MPD::Library
           Log.warn { "invalid entity_type returned" }
         end
       end
+    end
+  end
+
+  private def import_metadata(song : Peridot::MPD::Song)
+    artist_name = song.artist
+    album_name = song.album
+    artist = get_artist(artist_name)
+    album = get_album(album_name, artist)
+
+    artist.songs << song
+    album.songs << song
+    @songs << song
+  end
+
+  private def get_artist(name : String) : Peridot::MPD::Library::Artist
+    if @artists.find { |x| x.name == name }
+      @artists.find { |x| x.name == name }.not_nil!
+    else
+      artist = Peridot::MPD::Library::Artist.new(name)
+      @artists << artist
+      artist
+    end
+  end
+
+  private def get_album(name : String, artist : Peridot::MPD::Library::Artist) : Peridot::MPD::Library::Album
+    if @albums.find { |x| x.name == name }
+      @albums.find { |x| x.name == name }.not_nil!
+    else
+      album = Peridot::MPD::Library::Album.new(name, artist)
+      @albums << album
+      album
     end
   end
 end
