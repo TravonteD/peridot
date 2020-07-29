@@ -268,6 +268,10 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
     @mpd.play(@mpd.queue.songs[@selected_line].id)
   end
 
+  def update
+    @lines = formatted_songs
+  end
+
   private def formatted_songs
     @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", @dimensions[:w]) }
   end

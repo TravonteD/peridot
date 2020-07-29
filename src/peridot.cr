@@ -42,6 +42,7 @@ def main
             ui.windows[:queue].action
           when :song
             ui.windows[:song].action
+            ui.windows[:queue].update
           when :library
             selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase
             case selection
