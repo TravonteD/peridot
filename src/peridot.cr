@@ -46,16 +46,16 @@ def main
             case selection
             when "queue"
               ui.windows[:queue].lines = ui.songs
-              ui.windows[:queue].add_title("Queue (#{ui.songs.size} Songs)")
+              ui.windows[:queue].title = "Queue (#{ui.songs.size} Songs)"
             when "artists"
               ui.windows[:queue].lines = mpd.library.artists.map { |x| x.name }.sort
-              ui.windows[:queue].add_title("Artists")
+              ui.windows[:queue].title = "Artists"
             when "albums"
               ui.windows[:queue].lines = mpd.library.albums.map { |x| x.name }.sort
-              ui.windows[:queue].add_title("Albums")
+              ui.windows[:queue].title = "Albums"
             when "songs"
               ui.windows[:queue].lines = mpd.library.songs.map { |x| x.title }.sort
-              ui.windows[:queue].add_title("Songs")
+              ui.windows[:queue].title = "Songs"
             end
             ui.windows[:queue].draw
           end
@@ -80,7 +80,7 @@ def main
       end
 
       # Rerender status window
-      ui.windows[:status].add_title(mpd.formatted_status)
+      ui.windows[:status].title = mpd.formatted_status
       ui.windows[:status].draw
 
       ui.redraw

@@ -55,6 +55,7 @@ class Peridot::UI
   end
 
   def redraw
+    @w.clear
     @w.empty
     @w << @border
     @windows.values.each { |x| @w << x.container }
@@ -141,31 +142,35 @@ end
 # Represents a termbox container used as a window within the UI
 class Peridot::UI::Window
   getter container : Peridot::TContainer
+  setter title : String
   property lines : Array(String)
   property selected_line : Int32
 
-  def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+  def initialize(@title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     @container = Peridot::TContainer.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
     @border = Border.new(container)
     @container << @border
     @offset = 0
-    add_title(title)
+    add_title(@title)
     @lines = [] of String
     @selected_line = -1
   end
 
-  def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32), lines : Array(String))
+  def initialize(@title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32), lines : Array(String))
     @container = Peridot::TContainer.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
     @border = Border.new(container)
     @container << @border
     @offset = 0
-    add_title(title)
+    add_title(@title)
     @lines = lines
     @selected_line = -1
   end
 
   def draw
     unless @lines.empty?
+      @container.empty
+      @container << @border
+      add_title(@title)
       if @selected_line >= 0
         write_lines(@lines, @selected_line)
       else
@@ -191,8 +196,6 @@ class Peridot::UI::Window
 
   # Note: This will truncate the lines if they extend beyond the containers boundary
   def write_lines(lines : Array(String))
-    clear
-
     lines.each.with_index do |line, row|
       write_line(line, row + 1)
       break if row + 1 == @container.height - 2
@@ -201,8 +204,6 @@ class Peridot::UI::Window
 
   # Writes lines with the selected line highlighted
   def write_lines(lines : Array(String), selected_index : Int32)
-    clear
-
     max_height = @container.height - 2
     if (selected_index - @offset) == max_height
       @offset += 1
@@ -223,7 +224,6 @@ class Peridot::UI::Window
   end
 
   def add_title(title : String)
-    write_line("─"*25, 0) # Clears the title line
     write_line(title, 0)
   end
 
@@ -233,12 +233,5 @@ class Peridot::UI::Window
 
   def deselect
     @border.foreground = 8
-  end
-
-  def clear
-    (0..@container.height).each.with_index do |line, row|
-        write_line((" " * (@container.width - 2)), row + 1)
-        break if row + 1 == @container.height - 2
-    end
   end
 end
