@@ -223,6 +223,11 @@ struct Peridot::MPD::Library
     if LibMpdClient.mpd_send_list_all_meta(connection, "")
       while (entity = LibMpdClient.mpd_recv_entity(connection))
         case LibMpdClient.mpd_entity_get_type(entity)
+        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_DIRECTORY
+          next
+        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_UNKNOWN
+          Log.warn { "unknown entity received" }
+          next
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
           song = LibMpdClient.mpd_entity_get_song(entity)
           import_metadata(Peridot::MPD::Song.new(@connection, song))
@@ -230,8 +235,6 @@ struct Peridot::MPD::Library
           playlist = LibMpdClient.mpd_entity_get_playlist(entity)
           path = String.new(LibMpdClient.mpd_playlist_get_path(playlist))
           @playlists << path
-        when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_UNKNOWN
-          Log.warn { "unknown entity received" }
         else
           Log.warn { "invalid entity_type returned" }
         end
