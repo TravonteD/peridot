@@ -29,6 +29,7 @@ class Peridot::UI
 
   def initialize(@mpd : Peridot::MPD)
     @w = Peridot::TWindow.new
+    @border = Border.new(@w)
     @songs = [] of String
     @windows = {} of Symbol => Window
     setup_main_window
@@ -55,6 +56,7 @@ class Peridot::UI
 
   def redraw
     @w.empty
+    @w << @border
     @windows.values.each { |x| @w << x.container }
     @w.render
   end
@@ -79,7 +81,7 @@ class Peridot::UI
     @w.set_output_mode(OUTPUT_NORMAL)
     @w.set_primary_colors(8, 0)
     @w.clear
-    @w << Border.new(@w)
+    @w << @border
   end
 
   private def create_child_windows
