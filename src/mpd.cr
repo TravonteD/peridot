@@ -12,7 +12,11 @@ struct Peridot::MPD
   end
 
   def now_playing_stats : Array(String)
-    [current_song.title, "#{current_song.album}, #{current_song.artist}"]
+    if current_song
+      [current_song.not_nil!.title, "#{current_song.not_nil!.album}, #{current_song.not_nil!.artist}"]
+    else
+      ["", "", ""]
+    end
   end
 
   def formatted_status : String
@@ -118,9 +122,9 @@ struct Peridot::MPD
     LibMpdClient.mpd_status_get_bit_rate(self.status)
   end
 
-  def current_song : Song
+  def current_song : Song | Nil
     song_id = LibMpdClient.mpd_status_get_song_id(self.status)
-    @queue.songs.find { |x| x.id == song_id }.not_nil!
+    @queue.songs.find { |x| x.id == song_id }
   end
 
   private def status : LibMpdClient::MpdStatus*
