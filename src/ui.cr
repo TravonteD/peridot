@@ -151,7 +151,7 @@ class Peridot::UI::Window
     @border = Border.new(container)
     @container << @border
     @offset = 0
-    add_title(@title)
+    add_title
     @lines = [] of String
     @selected_line = -1
   end
@@ -161,7 +161,7 @@ class Peridot::UI::Window
     @border = Border.new(container)
     @container << @border
     @offset = 0
-    add_title(@title)
+    add_title
     @lines = lines
     @selected_line = -1
   end
@@ -170,7 +170,7 @@ class Peridot::UI::Window
     unless @lines.empty?
       @container.empty
       @container << @border
-      add_title(@title)
+      add_title
       if @selected_line >= 0
         write_lines(@lines, @selected_line)
       else
@@ -223,8 +223,8 @@ class Peridot::UI::Window
     end
   end
 
-  def add_title(title : String)
-    write_line(title, 0)
+  private def add_title
+    write_line(@title, 0)
   end
 
   def select
