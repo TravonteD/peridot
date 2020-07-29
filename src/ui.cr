@@ -58,8 +58,8 @@ class Peridot::UI
     @w.clear
     @w.empty
     @w << @border
-    [:library, :status, :playlist].each { |x| @w << @windows[x].container}
-    # @windows.values.each { |x| @w << x.container }
+    [:library, :playlist].each { |x| @w << @windows[x].container}
+    @w << @status_window.not_nil!.container
     @w << @windows[@primary_window.not_nil!].container
     @w.render
   end
@@ -81,8 +81,7 @@ class Peridot::UI
   end
 
   def update_status
-    @windows[:status].title = @mpd.formatted_status
-    @windows[:status].draw
+    @status_window.not_nil!.update
   end
 
   private def setup_main_window
@@ -97,8 +96,9 @@ class Peridot::UI
     @songs = @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
     @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library], ["Queue", "Songs", "Artists", "Albums"])
     @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
-    @windows[:status] = Peridot::UI::Window.new(@mpd.formatted_status, dimensions[:status], @mpd.now_playing_stats)
+    @status_window = Peridot::UI::StatusWindow.new(@mpd, dimensions[:status])
     @windows.values.each { |x| @w << x.container }
+    @w << @status_window.not_nil!.container
 
     @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue], @songs)
     @primary_window = :queue
@@ -242,5 +242,17 @@ class Peridot::UI::Window
 
   def deselect
     @border.foreground = 8
+  end
+end
+
+class Peridot::UI::StatusWindow < Peridot::UI::Window
+  def initialize(@mpd : Peridot::MPD, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+    super(@mpd.formatted_status, dimensions, @mpd.now_playing_stats)
+  end
+
+  def update
+    @title = @mpd.formatted_status
+    @lines = @mpd.now_playing_stats
+    draw
   end
 end
