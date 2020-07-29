@@ -143,6 +143,10 @@ struct Peridot::MPD::Queue
     end
     songs
   end
+
+  def add(uri : String)
+    LibMpdClient.mpd_run_add(@connection, uri)
+  end
 end
 
 struct Peridot::MPD::Song

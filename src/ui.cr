@@ -285,6 +285,8 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
   end
 
   def action
+    @mpd.queue.add(@songs[@selected_line].uri)
+    @mpd.play(@mpd.queue.songs[@mpd.queue.length - 1].id)
   end
 
   private def formatted_songs
