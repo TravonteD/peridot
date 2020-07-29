@@ -58,7 +58,9 @@ class Peridot::UI
     @w.clear
     @w.empty
     @w << @border
-    @windows.values.each { |x| @w << x.container }
+    [:library, :status, :playlist].each { |x| @w << @windows[x].container}
+    # @windows.values.each { |x| @w << x.container }
+    @w << @windows[@primary_window.not_nil!].container
     @w.render
   end
 
@@ -95,9 +97,11 @@ class Peridot::UI
     @songs = @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
     @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library], ["Queue", "Songs", "Artists", "Albums"])
     @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
-    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue], @songs)
     @windows[:status] = Peridot::UI::Window.new(@mpd.formatted_status, dimensions[:status], @mpd.now_playing_stats)
     @windows.values.each { |x| @w << x.container }
+
+    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue], @songs)
+    @primary_window = :queue
   end
 
   private def calculate_window_dimensions
