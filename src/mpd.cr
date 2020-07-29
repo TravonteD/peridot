@@ -148,6 +148,10 @@ end
 struct Peridot::MPD::Song
   def initialize(@connection : LibMpdClient::MpdConnection*, @song : LibMpdClient::MpdSong*); end
 
+  def uri : String
+    String.new(LibMpdClient.mpd_song_get_uri(@song))
+  end
+
   def id : UInt32
     LibMpdClient.mpd_song_get_id(@song)
   end
