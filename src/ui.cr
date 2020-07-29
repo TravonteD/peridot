@@ -92,13 +92,12 @@ class Peridot::UI
 
   private def create_child_windows
     dimensions = calculate_window_dimensions
-    @songs = @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", dimensions[:queue][:w]) }
     @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library], ["Queue", "Songs", "Artists", "Albums"])
     @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
     @windows[:status] = Peridot::UI::StatusWindow.new(@mpd, dimensions[:status])
     @windows.values.each { |x| @w << x.container }
 
-    @windows[:queue] = Peridot::UI::Window.new("Queue (#{songs.size} Songs)", dimensions[:queue], @songs)
+    @windows[:queue] = Peridot::UI::QueueWindow.new(@mpd, dimensions[:queue])
     @primary_window = :queue
   end
 
@@ -138,11 +137,6 @@ class Peridot::UI
         h: status_height
       }
     }
-  end
-
-  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
-      margin = " " * (width - (start_string.size + end_string.size) - 2)
-      start_string + margin + end_string
   end
 end
 
@@ -238,7 +232,12 @@ class Peridot::UI::Window
     @border.foreground = 8
   end
 
+  # Defined Here to be overriden in child classes
   def update
+  end
+
+  # Defined Here to be overriden in child classes
+  def action
   end
 
   private def add_title
@@ -255,5 +254,24 @@ class Peridot::UI::StatusWindow < Peridot::UI::Window
     @title = @mpd.formatted_status
     @lines = @mpd.now_playing_stats
     draw
+  end
+end
+
+class Peridot::UI::QueueWindow < Peridot::UI::Window
+  def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+    super("Queue (#{@mpd.queue.songs.size} Songs)", @dimensions, formatted_songs)
+  end
+
+  def action
+    @mpd.play(@mpd.queue.songs[@selected_line].id)
+  end
+
+  private def formatted_songs
+    @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", @dimensions[:w]) }
+  end
+
+  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
+      margin = " " * (width - (start_string.size + end_string.size) - 2)
+      start_string + margin + end_string
   end
 end

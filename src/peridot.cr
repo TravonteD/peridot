@@ -38,7 +38,7 @@ def main
         when Termbox::KEY_ENTER
           case ui.current_window
           when :queue
-            mpd.play(mpd.queue.songs[ui.windows[:queue].selected_line].id)
+            ui.windows[:queue].action
           when :library
             selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase
             case selection
