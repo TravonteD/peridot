@@ -2,6 +2,17 @@ require "termbox"
 
 include Termbox
 
+# Extends a termbox window to allow for element clearing
+class Peridot::TWindow < Termbox::Window
+  def initialize
+    super
+  end
+
+  def empty
+    @elements = [] of Element
+  end
+end
+
 class Peridot::UI
   getter windows : Hash(Symbol, Window)
   getter songs : Array(String)
@@ -9,11 +20,19 @@ class Peridot::UI
 
   def initialize(mpd : Peridot::MPD)
     @mpd = mpd
-    @w = Termbox::Window.new
+    @w = Peridot::TWindow.new
     @songs = [] of String
     @windows = {} of Symbol => Window
     setup_main_window
     create_child_windows
+  end
+
+  def empty
+    @w.empty
+  end
+
+  def clear
+    @w.clear
   end
 
   def move_down(window_name : Symbol)
@@ -209,5 +228,5 @@ class Peridot::UI::Window
         write_line((" " * (@container.width - 2)), row + 1)
         break if row + 1 == @container.height - 2
     end
- end
+  end
 end
