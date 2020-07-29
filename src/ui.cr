@@ -12,14 +12,22 @@ class Peridot::TWindow < Termbox::Window
     @elements = [] of Element
   end
 end
+class Peridot::TContainer < Termbox::Container
+  def initialize(@pivot : Position, @width : Int32, @height : Int32)
+    super
+  end
+
+  def empty
+    @elements = [] of Element
+  end
+end
 
 class Peridot::UI
   getter windows : Hash(Symbol, Window)
   getter songs : Array(String)
   getter current_window : Symbol | Nil
 
-  def initialize(mpd : Peridot::MPD)
-    @mpd = mpd
+  def initialize(@mpd : Peridot::MPD)
     @w = Peridot::TWindow.new
     @songs = [] of String
     @windows = {} of Symbol => Window
@@ -130,12 +138,12 @@ end
 
 # Represents a termbox container used as a window within the UI
 class Peridot::UI::Window
-  getter container : Termbox::Container
+  getter container : Peridot::TContainer
   property lines : Array(String)
   property selected_line : Int32
 
   def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
+    @container = Peridot::TContainer.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
     @border = Border.new(container)
     @container << @border
     @offset = 0
@@ -145,7 +153,7 @@ class Peridot::UI::Window
   end
 
   def initialize(title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32), lines : Array(String))
-    @container = Container.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
+    @container = Peridot::TContainer.new(Position.new(dimensions[:x], dimensions[:y]), dimensions[:w], dimensions[:h])
     @border = Border.new(container)
     @container << @border
     @offset = 0

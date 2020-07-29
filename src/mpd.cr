@@ -129,9 +129,7 @@ struct Peridot::MPD
 end
 
 struct Peridot::MPD::Queue
-  def initialize(connection : LibMpdClient::MpdConnection*)
-    @connection = connection
-  end
+  def initialize(@connection : LibMpdClient::MpdConnection*); end
 
   def length : UInt32
     status = LibMpdClient.mpd_run_status(@connection)
@@ -148,10 +146,7 @@ struct Peridot::MPD::Queue
 end
 
 struct Peridot::MPD::Song
-  def initialize(connection : LibMpdClient::MpdConnection*, song : LibMpdClient::MpdSong*)
-    @connection = connection
-    @song = song
-  end
+  def initialize(@connection : LibMpdClient::MpdConnection*, @song : LibMpdClient::MpdSong*); end
 
   def id : UInt32
     LibMpdClient.mpd_song_get_id(@song)
@@ -210,8 +205,7 @@ struct Peridot::MPD::Library
   getter :songs
   getter :playlists
 
-  def initialize(connection : LibMpdClient::MpdConnection*)
-    @connection = connection
+  def initialize(@connection : LibMpdClient::MpdConnection*)
     @artists = [] of Artist
     @albums = [] of Album
     @songs = [] of Peridot::MPD::Song
@@ -279,9 +273,7 @@ struct Peridot::MPD::Library::Album
   property artist : Artist
   property songs : Array(Peridot::MPD::Song)
 
-  def initialize(name : String, artist : Artist)
-    @name = name
-    @artist = artist
+  def initialize(@name : String, @artist : Artist)
     @songs = [] of Peridot::MPD::Song
   end
 end
@@ -291,8 +283,7 @@ struct Peridot::MPD::Library::Artist
   property albums : Array(Album)
   property songs : Array(Peridot::MPD::Song)
 
-  def initialize(name : String)
-    @name = name
+  def initialize(@name : String)
     @albums = [] of Album
     @songs = [] of Peridot::MPD::Song
   end
