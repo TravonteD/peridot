@@ -46,15 +46,18 @@ def main
             case selection
             when "queue"
               ui.windows[:queue].lines = ui.songs
+              ui.windows[:queue].add_title("Queue (#{ui.songs.size} Songs)")
             when "artists"
               ui.windows[:queue].lines = mpd.library.artists
+              ui.windows[:queue].add_title("Artists")
             when "albums"
               ui.windows[:queue].lines = mpd.library.albums.map { |x| x[1] }
+              ui.windows[:queue].add_title("Albums")
             when "songs"
               ui.windows[:queue].lines = mpd.library.songs.map { |x| x.title }
+              ui.windows[:queue].add_title("Songs")
             end
             ui.windows[:queue].draw
-          else
           end
         else
           case ev.ch.chr

@@ -194,6 +194,7 @@ class Peridot::UI::Window
   end
 
   def add_title(title : String)
+    write_line("─"*25, 0) # Clears the title line
     write_line(title, 0)
   end
 
