@@ -72,9 +72,9 @@ def main
           when 'p'
             mpd.toggle_pause
           when 'j'
-            ui.move_down(ui.current_window)
+            ui.move_down(ui.current_window.not_nil!)
           when 'k'
-            ui.move_up(ui.current_window)
+            ui.move_up(ui.current_window.not_nil!)
           end
         end
       end

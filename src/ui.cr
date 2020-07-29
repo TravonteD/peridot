@@ -16,14 +16,12 @@ class Peridot::UI
     create_child_windows
   end
 
-  def move_down(window_name : Symbol | Nil)
-    return Void unless window_name
+  def move_down(window_name : Symbol)
     @windows[window_name].selected_line += 1 unless @windows[window_name].selected_line == (@windows[window_name].lines.size - 1)
     @windows[window_name].draw
   end
 
-  def move_up(window_name : Symbol | Nil)
-    return Void unless window_name
+  def move_up(window_name : Symbol)
     @windows[window_name].selected_line -= 1 unless @windows[window_name].selected_line == 0
     @windows[window_name].draw
   end
