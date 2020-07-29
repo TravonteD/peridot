@@ -12,6 +12,7 @@ def main
     # Move to the first line in both windows
     ui.move_down(:library)
     ui.move_down(:queue)
+    ui.move_down(:song)
     ui.move_down(:playlist)
 
     # Start with the queue window active
@@ -32,7 +33,7 @@ def main
         when Termbox::KEY_CTRL_L
           ui.select_window(:library)
         when Termbox::KEY_CTRL_Q
-          ui.select_window(:queue)
+          ui.select_window(ui.primary_window.not_nil!)
         when Termbox::KEY_CTRL_P
           ui.select_window(:playlist)
         when Termbox::KEY_ENTER
@@ -43,19 +44,18 @@ def main
             selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase
             case selection
             when "queue"
-              ui.windows[:queue].lines = ui.songs
-              ui.windows[:queue].title = "Queue (#{ui.songs.size} Songs)"
+              ui.primary_window = :queue
             when "artists"
               ui.windows[:queue].lines = mpd.library.artists.map { |x| x.name }.sort
               ui.windows[:queue].title = "Artists"
+              ui.windows[:queue].draw
             when "albums"
               ui.windows[:queue].lines = mpd.library.albums.map { |x| x.name }.sort
               ui.windows[:queue].title = "Albums"
+              ui.windows[:queue].draw
             when "songs"
-              ui.windows[:queue].lines = mpd.library.songs.map { |x| x.title }.sort
-              ui.windows[:queue].title = "Songs"
+              ui.primary_window = :song
             end
-            ui.windows[:queue].draw
           end
         else
           case ev.ch.chr
