@@ -17,9 +17,7 @@ def main
     # Start with the queue window active
     ui.select_window(:queue)
 
-    # Status Window
-    ui.windows[:status].draw
-
+    ui.update_status
     ui.redraw
 
     # Main Event loop
@@ -79,10 +77,7 @@ def main
         end
       end
 
-      # Rerender status window
-      ui.windows[:status].title = mpd.formatted_status
-      ui.windows[:status].draw
-
+      ui.update_status
       ui.redraw
     end
   ensure

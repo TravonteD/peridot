@@ -78,6 +78,11 @@ class Peridot::UI
     @current_window = name
   end
 
+  def update_status
+    @windows[:status].title = @mpd.formatted_status
+    @windows[:status].draw
+  end
+
   private def setup_main_window
     @w.set_output_mode(OUTPUT_NORMAL)
     @w.set_primary_colors(8, 0)
