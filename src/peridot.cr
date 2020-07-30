@@ -15,6 +15,7 @@ def main
     ui.move_down(:song)
     ui.move_down(:playlist)
     ui.move_down(:album)
+    ui.move_down(:artist)
 
     # Start with the queue window active
     ui.select_window(:queue)
@@ -47,15 +48,16 @@ def main
           when :album
             ui.windows[:album].action
             ui.windows[:queue].update
+          when :artist
+            ui.windows[:artist].action
+            ui.windows[:queue].update
           when :library
             selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase
             case selection
             when "queue"
               ui.primary_window = :queue
             when "artists"
-              ui.windows[:queue].lines = mpd.library.artists.map { |x| x.name }.sort
-              ui.windows[:queue].title = "Artists"
-              ui.windows[:queue].draw
+              ui.primary_window = :artist
             when "albums"
               ui.primary_window = :album
             when "songs"
