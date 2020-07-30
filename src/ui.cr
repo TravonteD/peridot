@@ -100,6 +100,7 @@ class Peridot::UI
 
     @windows[:queue] = Peridot::UI::QueueWindow.new(@mpd, dimensions[:queue])
     @windows[:song] = Peridot::UI::SongWindow.new(@mpd, dimensions[:queue])
+    @windows[:album] = Peridot::UI::AlbumWindow.new(@mpd, dimensions[:queue])
     @primary_window = :queue
   end
 
@@ -270,6 +271,7 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
 
   def update
     @lines = formatted_songs
+    draw
   end
 
   private def formatted_songs
@@ -295,6 +297,26 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
 
   private def formatted_songs
     @songs.map { |x| format_line_margin("#{x.title}", "#{x.album},#{x.artist}", @dimensions[:w]) }
+  end
+
+  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
+      margin = " " * (width - (start_string.size + end_string.size) - 2)
+      start_string + margin + end_string
+  end
+end
+
+class Peridot::UI::AlbumWindow < Peridot::UI::Window
+  def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+    @albums = @mpd.library.albums.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Album))
+    super("Albums", @dimensions, formatted_albums)
+  end
+
+  def action
+    @albums[@selected_line].songs.each { |x| @mpd.queue.add(x.uri) }
+  end
+
+  private def formatted_albums
+    @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
   end
 
   private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
