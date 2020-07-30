@@ -1,18 +1,41 @@
 # peridot
 
-A modern terminal mpd client
+A modern terminal MPD (Music Player Daemon) client
 
 ## Installation
 
-TODO: Write installation instructions here
+### Dependencies
+
+- `libmpdclient`
+- `termbox`
+- `crystal`
+- `shards`
+
+### From Source
+
+1. Install the dependencies from you package manager
+2. `cd` into the directory and run `shards install`
+3. run `shards build`
+4. The binary will be in the `bin/` directory
 
 ## Usage
 
-TODO: Write usage instructions here
+### Launching
+Run the command `peridot`
+
+### Keybindings
+- "p" : toggle play/pause
+- "s" : stop
+- "j": move down
+- "k": move up
+- "ctrl-l": move to the library window
+- "ctrl-p": move to the playlist window
+- "ctrl-q": move to the primary window
+- "Enter" : play the selection
 
 ## Development
 
-TODO: Write development instructions here
+Install the dependencies and run `shards install`
 
 ## Contributing
 
@@ -21,7 +44,3 @@ TODO: Write development instructions here
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
-
-## Contributors
-
-- [your-name-here](https://github.com/travonted) - creator and maintainer
