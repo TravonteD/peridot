@@ -192,7 +192,6 @@ class Peridot::UI::Window
   def write_line(text : String, line : Int32)
     text.chars.each.with_index do |char, column|
       @container << Cell.new(char, Position.new(column + 1, line))
-      column += 1
     end
   end
 
@@ -200,7 +199,6 @@ class Peridot::UI::Window
   def write_line(text : String, line : Int32, fg : Int32, bg : Int32)
     text.chars.each.with_index do |char, column|
       @container << Cell.new(char, Position.new(column + 1, line), fg, bg)
-      column += 1
     end
   end
 
