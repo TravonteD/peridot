@@ -127,6 +127,30 @@ struct Peridot::MPD
     @queue.songs.find { |x| x.id == song_id }
   end
 
+  def queue_songs : Array(Peridot::MPD::Song)
+    @queue.songs
+  end
+
+  def queue_length : UInt32
+    @queue.length
+  end
+
+  def queue_add(uri : String) : Void
+    @queue.add(uri)
+  end
+
+  def artists : Array(Peridot::MPD::Library::Artist)
+    @library.artists
+  end
+
+  def albums : Array(Peridot::MPD::Library::Album)
+    @library.albums
+  end
+
+  def songs : Array(Peridot::MPD::Song)
+    @library.songs
+  end
+
   private def status : LibMpdClient::MpdStatus*
     LibMpdClient.mpd_run_status(@connection)
   end

@@ -266,11 +266,11 @@ end
 
 class Peridot::UI::QueueWindow < Peridot::UI::Window
   def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    super("Queue (#{@mpd.queue.songs.size} Songs)", @dimensions, formatted_songs)
+    super("Queue (#{@mpd.queue_songs.size} Songs)", @dimensions, formatted_songs)
   end
 
   def action
-    @mpd.play(@mpd.queue.songs[@selected_line].id)
+    @mpd.play(@mpd.queue_songs[@selected_line].id)
   end
 
   def update
@@ -279,7 +279,7 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
   end
 
   private def formatted_songs
-    @mpd.queue.songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", @dimensions[:w]) }
+    @mpd.queue_songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", @dimensions[:w]) }
   end
 
   private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
@@ -290,13 +290,13 @@ end
 
 class Peridot::UI::SongWindow < Peridot::UI::Window
   def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    @songs = @mpd.library.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Song))
+    @songs = @mpd.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Song))
     super("Songs", @dimensions, formatted_songs)
   end
 
   def action
-    @mpd.queue.add(@songs[@selected_line].uri)
-    @mpd.play(@mpd.queue.songs[@mpd.queue.length - 1].id)
+    @mpd.queue_add(@songs[@selected_line].uri)
+    @mpd.play(@mpd.queue_songs[@mpd.queue.length - 1].id)
   end
 
   private def formatted_songs
@@ -311,15 +311,15 @@ end
 
 class Peridot::UI::AlbumWindow < Peridot::UI::Window
   def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    @albums = @mpd.library.albums.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Album))
+    @albums = @mpd.albums.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Album))
     super("Albums", @dimensions, formatted_albums)
   end
 
   def action
     songs = @albums[@selected_line].songs
-    songs.each { |x| @mpd.queue.add(x.uri) }
+    songs.each { |x| @mpd.queue_add(x.uri) }
     # Play the first song
-    @mpd.play(@mpd.queue.songs[@mpd.queue.length - (songs.size)].id)
+    @mpd.play(@mpd.queue_songs[@mpd.queue_length - (songs.size)].id)
   end
 
   private def formatted_albums
@@ -334,15 +334,15 @@ end
 
 class Peridot::UI::ArtistWindow < Peridot::UI::Window
   def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    @artists = @mpd.library.artists.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Artist))
+    @artists = @mpd.artists.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Artist))
     super("Artists", @dimensions, formatted_artists)
   end
 
   def action
     songs = @artists[@selected_line].songs
-    songs.each { |x| @mpd.queue.add(x.uri) }
+    songs.each { |x| @mpd.queue_add(x.uri) }
     # Play the first song
-    @mpd.play(@mpd.queue.songs[@mpd.queue.length - (songs.size)].id)
+    @mpd.play(@mpd.queue_songs[@mpd.queue_length - (songs.size)].id)
   end
 
   private def formatted_artists
