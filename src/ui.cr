@@ -102,7 +102,12 @@ class Peridot::UI
     @windows[:song] = Peridot::UI::SongWindow.new(@mpd, dimensions[:queue])
     @windows[:album] = Peridot::UI::AlbumWindow.new(@mpd, dimensions[:queue])
     @windows[:artist] = Peridot::UI::ArtistWindow.new(@mpd, dimensions[:queue])
+
+    # Start on the queue window
     @primary_window = :queue
+
+    # Move to the first line in interactive windows
+    [:queue, :song, :album, :artist, :library, :playlist].each { |x| move_down(x) }
   end
 
   private def calculate_window_dimensions

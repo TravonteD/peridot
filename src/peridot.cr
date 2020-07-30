@@ -9,17 +9,6 @@ def main
     mpd = Peridot::MPD.new("localhost", 6600)
     ui = Peridot::UI.new(mpd)
 
-    # Move to the first line in both windows
-    ui.move_down(:library)
-    ui.move_down(:queue)
-    ui.move_down(:song)
-    ui.move_down(:playlist)
-    ui.move_down(:album)
-    ui.move_down(:artist)
-
-    # Start with the queue window active
-    ui.select_window(:queue)
-
     ui.update_status
     ui.redraw
 
