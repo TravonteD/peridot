@@ -29,13 +29,8 @@ def main
         ui.select_window(:playlist)
       when Termbox::KEY_ENTER
         case ui.current_window
-        when :queue
-          ui.windows[:queue].action
-        when :song
-          ui.windows[:song].action
-          ui.windows[:queue].update
-        when :album
-          ui.windows[:album].action
+        when :queue, :song, :album
+          ui.windows[ui.current_window].action
           ui.windows[:queue].update
         when :artist
           ui.windows[:artist].action
