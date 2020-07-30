@@ -318,7 +318,10 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
   end
 
   def action
-    @albums[@selected_line].songs.each { |x| @mpd.queue.add(x.uri) }
+    songs = @albums[@selected_line].songs
+    songs.each { |x| @mpd.queue.add(x.uri) }
+    # Play the first song
+    @mpd.play(@mpd.queue.songs[@mpd.queue.length - (songs.size)].id)
   end
 
   private def formatted_albums
@@ -338,7 +341,10 @@ class Peridot::UI::ArtistWindow < Peridot::UI::Window
   end
 
   def action
-    @artists[@selected_line].songs.each { |x| @mpd.queue.add(x.uri) }
+    songs = @artists[@selected_line].songs
+    songs.each { |x| @mpd.queue.add(x.uri) }
+    # Play the first song
+    @mpd.play(@mpd.queue.songs[@mpd.queue.length - (songs.size)].id)
   end
 
   private def formatted_artists
