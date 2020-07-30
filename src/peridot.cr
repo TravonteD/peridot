@@ -53,6 +53,7 @@ def main
             when "songs"
               ui.primary_window = :song
             end
+            ui.select_window(ui.primary_window.not_nil!)
           end
         else
           case ev.ch.chr
