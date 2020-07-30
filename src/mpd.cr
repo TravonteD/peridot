@@ -142,6 +142,8 @@ struct Peridot::MPD::Queue
 
   def songs : Array(Peridot::MPD::Song)
     songs = [] of Peridot::MPD::Song
+    return songs if length.zero?
+
     (0..self.length - 1).each do |i|
       songs << Peridot::MPD::Song.new(@connection, LibMpdClient.mpd_run_get_queue_song_pos(@connection, i))
     end
