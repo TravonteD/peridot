@@ -166,25 +166,27 @@ describe Peridot::UI do
   end
 
   describe "#move_down" do
-    it "increments the given windows selected line" do
+    it "increments the current windows selected line" do
       ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
+      ui.select_window(:library)
       line = ui.@windows[:library].@selected_line
 
-      ui.move_down(:library)
+      ui.move_down
 
       ui.@windows[:library].@selected_line.should eq line + 1
     end
   end
 
   describe "#move_up" do
-    it "decrements the given windows selected line" do
+    it "decrements the current windows selected line" do
       ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
+      ui.select_window(:library)
 
-      ui.move_down(:library)
+      ui.move_down
 
       ui.@windows[:library].@selected_line.should eq 1
 
-      ui.move_up(:library)
+      ui.move_up
 
       ui.@windows[:library].@selected_line.should eq 0
     end
