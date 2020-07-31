@@ -191,6 +191,10 @@ class Peridot::UI
       "stop" => ->{ @mpd.stop },
       "next" => ->{ @mpd.next },
       "previous" => ->{ @mpd.previous },
+      "toggle_repeat" => ->{ @mpd.repeat },
+      "toggle_single" => ->{ @mpd.single },
+      "toggle_consume" => ->{ @mpd.consume },
+      "toggle_random" => ->{ @mpd.random }
     }.as(Hash(String, Proc(Nil)))
   end
 end
