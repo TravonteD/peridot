@@ -1,0 +1,22 @@
+---
+keys:
+  "j": "move_down"
+  "k": "move_up"
+  "<": "previous"
+  ">": "next"
+  "p": "toggle_pause"
+  "s": "stop"
+  "r": "toggle_repeat"
+  "z": "toggle_random"
+  "y": "toggle_single"
+  "R": "toggle_consume"
+
+colors:
+  foreground: 8
+  background: 0
+  foreground_select: 3
+  background_select: 0
+
+server:
+  host: "localhost"
+  port: 6600
