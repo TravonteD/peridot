@@ -7,7 +7,7 @@ Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
 CONFIG = Peridot::Config.parse(File.read("test_config.yml"))
 
 def main
-  mpd = Peridot::MPD.new(CONFIG["server"]["host"].as_s, CONFIG["server"]["port"].as_i)
+  mpd = Peridot::MPD.new(CONFIG.server.host, CONFIG.server.port)
   main_window = Peridot::TWindow.new
   ui = Peridot::UI.new(mpd, main_window)
 

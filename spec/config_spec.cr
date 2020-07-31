@@ -33,8 +33,8 @@ describe Peridot::Config do
     it "parses server information" do
       config = Peridot::Config.parse(dummy_config)
 
-      config.server["host"].should eq "localhost"
-      config.server["port"].should eq 6600
+      config.server.host.should eq "localhost"
+      config.server.port.should eq 6600
     end
   end
 end
