@@ -250,6 +250,12 @@ class Peridot::UI::Window
   private def add_title
     write_line(@title, 0)
   end
+
+  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
+      margin_length = (width - (start_string.size + end_string.size) - 2)
+      margin = (margin_length < 0) ? " " : " " * margin_length
+      (start_string + margin + end_string).rstrip
+  end
 end
 
 class Peridot::UI::StatusWindow < Peridot::UI::Window
@@ -300,11 +306,6 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
   private def formatted_songs
     @mpd.queue_songs.map { |x| format_line_margin("#{x.artist} - #{x.title}", "#{x.album}", @dimensions[:w]) }
   end
-
-  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
-      margin = " " * (width - (start_string.size + end_string.size) - 2)
-      start_string + margin + end_string
-  end
 end
 
 class Peridot::UI::SongWindow < Peridot::UI::Window
@@ -319,12 +320,7 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
   end
 
   private def formatted_songs
-    @songs.map { |x| format_line_margin("#{x.title}", "#{x.album},#{x.artist}", @dimensions[:w]) }
-  end
-
-  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
-      margin = " " * (width - (start_string.size + end_string.size) - 2)
-      start_string + margin + end_string
+    @songs.map { |x| format_line_margin("#{x.title}", "#{x.album}, #{x.artist}", @dimensions[:w]) }
   end
 end
 
@@ -344,11 +340,6 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
   private def formatted_albums
     @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
   end
-
-  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
-      margin = " " * (width - (start_string.size + end_string.size) - 2)
-      start_string + margin + end_string
-  end
 end
 
 class Peridot::UI::ArtistWindow < Peridot::UI::Window
@@ -366,10 +357,5 @@ class Peridot::UI::ArtistWindow < Peridot::UI::Window
 
   private def formatted_artists
     @artists.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
-  end
-
-  private def format_line_margin(start_string : String, end_string : String, width : Int32) : String
-      margin = " " * (width - (start_string.size + end_string.size) - 2)
-      start_string + margin + end_string
   end
 end
