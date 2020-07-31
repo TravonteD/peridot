@@ -266,7 +266,7 @@ end
 
 class Peridot::UI::QueueWindow < Peridot::UI::Window
   def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    super("Queue (#{@mpd.queue_songs.size} Songs)", @dimensions, formatted_songs)
+    super("Queue (#{@mpd.queue_length} Songs)", @dimensions, formatted_songs)
   end
 
   def action
