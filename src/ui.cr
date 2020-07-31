@@ -254,13 +254,32 @@ end
 
 class Peridot::UI::StatusWindow < Peridot::UI::Window
   def initialize(@mpd : MpdClient, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    super(@mpd.formatted_status, dimensions, @mpd.now_playing_stats)
+    super(formatted_status, dimensions, formatted_stats)
   end
 
   def update
-    @title = @mpd.formatted_status
-    @lines = @mpd.now_playing_stats
+    @title = formatted_status
+    @lines = formatted_stats
     draw
+  end
+
+  private def formatted_status : String
+    sprintf("%s (Random: %s | Repeat: %s | Consume: %s  | Single: %s | Volume: %s%%)",
+      (state = @mpd.state) ? state.capitalize : "",
+      @mpd.random? ? "On" : "Off",
+      @mpd.repeat? ? "On" : "Off",
+      @mpd.consume? ? "On" : "Off",
+      @mpd.single? ? "On" : "Off",
+      @mpd.volume,
+    )
+  end
+
+  private def formatted_stats : Array(String)
+    if current_song = @mpd.current_song
+      [current_song.title, "#{current_song.album}, #{current_song.artist}"]
+    else
+      ["", "", ""]
+    end
   end
 end
 

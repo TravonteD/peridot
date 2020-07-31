@@ -1,8 +1,6 @@
 require "libmpdclient"
 
 module MpdClient
-  abstract def now_playing_stats : Array(String)
-  abstract def formatted_status : String
   abstract def play : Void
   abstract def play(id : UInt32) : Void
   abstract def pause : Void
@@ -23,7 +21,7 @@ module MpdClient
   abstract def elapsed_time : Int32
   abstract def total_time : Int32
   abstract def bit_rate : Int32
-  abstract def current_song : Peridot::MPD::Song | Nil
+  abstract def current_song : Peridot::MPD::Library::Song | Nil
   abstract def queue_songs : Array(Peridot::MPD::Library::Song)
   abstract def queue_length : UInt32
   abstract def queue_add(uri : String) : Void
@@ -43,25 +41,6 @@ struct Peridot::MPD
     @library = Library.new(@connection)
     @queue = Queue.new(@connection)
     @library.init
-  end
-
-  def now_playing_stats : Array(String)
-    if current_song
-      [current_song.not_nil!.title, "#{current_song.not_nil!.album}, #{current_song.not_nil!.artist}"]
-    else
-      ["", "", ""]
-    end
-  end
-
-  def formatted_status : String
-    sprintf("%s (Random: %s | Repeat: %s | Consume: %s  | Single: %s | Volume: %s%%)",
-      self.state.capitalize,
-      self.random? ? "On" : "Off",
-      self.repeat? ? "On" : "Off",
-      self.consume? ? "On" : "Off",
-      self.single? ? "On" : "Off",
-      self.volume,
-    )
   end
 
   def play : Void
