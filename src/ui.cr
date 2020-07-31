@@ -29,6 +29,7 @@ class Peridot::TWindow < Termbox::Window
     @elements = [] of Element
   end
 end
+
 class Peridot::TBorder < Termbox::Border
   def initialize(window : UIClient)
     super(window)
@@ -38,6 +39,7 @@ class Peridot::TBorder < Termbox::Border
     @elements = [] of Element
   end
 end
+
 class Peridot::TContainer < Termbox::Container
   def initialize(@pivot : Position, @width : Int32, @height : Int32)
     super
@@ -50,13 +52,11 @@ end
 
 class Peridot::UI
   getter windows : Hash(Symbol, Window)
-  getter songs : Array(String)
   getter current_window : Symbol | Nil
   property primary_window : Symbol | Nil
 
   def initialize(@mpd : MpdClient, @w : UIClient)
     @border = Peridot::TBorder.new(@w)
-    @songs = [] of String
     @windows = {} of Symbol => Window
     setup_main_window
     create_child_windows

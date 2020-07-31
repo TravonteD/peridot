@@ -154,10 +154,50 @@ end
 describe Peridot::UI do
   it "initializes all of the windows" do
     ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
-    ui.shutdown
-
     expected = [:library, :queue, :status, :playlist, :album, :artist, :song].sort
+
     ui.@windows.keys.sort.should eq expected
+  end
+
+  it "sets the primary window to :queue" do
+    ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
+
+    ui.@primary_window.should eq :queue
+  end
+
+  describe "#move_down" do
+    it "increments the given windows selected line" do
+      ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
+      line = ui.@windows[:library].@selected_line
+
+      ui.move_down(:library)
+
+      ui.@windows[:library].@selected_line.should eq line + 1
+    end
+  end
+
+  describe "#move_up" do
+    it "decrements the given windows selected line" do
+      ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
+
+      ui.move_down(:library)
+
+      ui.@windows[:library].@selected_line.should eq 1
+
+      ui.move_up(:library)
+
+      ui.@windows[:library].@selected_line.should eq 0
+    end
+  end
+
+  describe "#select_window" do
+    it "makes the given window the current one" do
+      ui = Peridot::UI.new(DummyMpdClient.new, DummyUIClient.new)
+
+      ui.select_window(:library)
+
+      ui.@current_window.should eq :library
+    end
   end
 end
 
