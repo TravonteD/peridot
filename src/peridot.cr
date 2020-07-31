@@ -6,7 +6,8 @@ Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
 
 def main
   mpd = Peridot::MPD.new("localhost", 6600)
-  ui = Peridot::UI.new(mpd)
+  main_window = Peridot::TWindow.new
+  ui = Peridot::UI.new(mpd, main_window)
 
   ui.select_window(ui.primary_window.not_nil!)
   ui.update_status

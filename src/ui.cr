@@ -2,10 +2,36 @@ require "termbox"
 
 include Termbox
 
+module UIClient
+  abstract def empty
+  abstract def clear
+  abstract def clear
+  abstract def empty
+  abstract def render
+  abstract def poll
+  abstract def shutdown
+  abstract def set_output_mode(mode : Int32)
+  abstract def set_primary_colors(fg : Int32, bg : Int32)
+  abstract def clear
+  abstract def width
+  abstract def height
+end
+
 # Extends a termbox window to allow for element clearing
 class Peridot::TWindow < Termbox::Window
+  include UIClient
+
   def initialize
     super
+  end
+
+  def empty
+    @elements = [] of Element
+  end
+end
+class Peridot::TBorder < Termbox::Border
+  def initialize(window : UIClient)
+    super(window)
   end
 
   def empty
@@ -28,9 +54,8 @@ class Peridot::UI
   getter current_window : Symbol | Nil
   property primary_window : Symbol | Nil
 
-  def initialize(@mpd : MpdClient)
-    @w = Peridot::TWindow.new
-    @border = Border.new(@w)
+  def initialize(@mpd : MpdClient, @w : UIClient)
+    @border = Peridot::TBorder.new(@w)
     @songs = [] of String
     @windows = {} of Symbol => Window
     setup_main_window
