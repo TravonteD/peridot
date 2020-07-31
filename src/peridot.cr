@@ -53,21 +53,10 @@ def main
           ui.select_window(ui.primary_window.not_nil!)
         end
       else
-        case ev.ch.chr
-        when 'q'
-          break
-        when '>'
-          mpd.next
-        when '<'
-          mpd.previous
-        when 's'
-          mpd.stop
-        when 'p'
-          mpd.toggle_pause
-        when 'j'
-          ui.move_down(ui.current_window.not_nil!)
-        when 'k'
-          ui.move_up(ui.current_window.not_nil!)
+        key = ev.ch.chr.to_s
+        break if key == "q"
+        if CONFIG.keys.has_key?(key)
+          ui.command(CONFIG.keys[key])
         end
       end
     end
