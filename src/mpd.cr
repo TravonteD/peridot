@@ -285,9 +285,8 @@ struct Peridot::MPD::Library
   end
 
   def init : Void
-    connection = LibMpdClient.mpd_connection_new("localhost", 6600, 1000) # Timeout is 1 second for now
-    if LibMpdClient.mpd_send_list_all_meta(connection, "")
-      while (entity = LibMpdClient.mpd_recv_entity(connection))
+    if LibMpdClient.mpd_send_list_all_meta(@connection, "")
+      while (entity = LibMpdClient.mpd_recv_entity(@connection))
         case LibMpdClient.mpd_entity_get_type(entity)
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_DIRECTORY
           next
