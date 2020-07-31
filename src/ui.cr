@@ -290,13 +290,13 @@ end
 
 class Peridot::UI::SongWindow < Peridot::UI::Window
   def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
-    @songs = @mpd.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Song))
+    @songs = @mpd.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Library::Song))
     super("Songs", @dimensions, formatted_songs)
   end
 
   def action
     @mpd.queue_add(@songs[@selected_line].uri)
-    @mpd.play(@mpd.queue_songs[@mpd.queue.length - 1].id)
+    @mpd.play(@mpd.queue_songs[@mpd.queue_length - 1].id)
   end
 
   private def formatted_songs

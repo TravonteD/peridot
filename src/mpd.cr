@@ -29,7 +29,7 @@ module MpdClient
   abstract def queue_add(uri : String) : Void
   abstract def artists : Array(Peridot::MPD::Library::Artist)
   abstract def albums : Array(Peridot::MPD::Library::Album)
-  abstract def songs : Array(Peridot::MPD::Song)
+  abstract def songs : Array(Peridot::MPD::Library::Song)
 end
 
 struct Peridot::MPD
@@ -181,7 +181,7 @@ struct Peridot::MPD
     @library.albums
   end
 
-  def songs : Array(Peridot::MPD::Song)
+  def songs : Array(Peridot::MPD::Library::Song)
     @library.songs
   end
 
@@ -280,7 +280,7 @@ struct Peridot::MPD::Library
   def initialize(@connection : LibMpdClient::MpdConnection*)
     @artists = [] of Artist
     @albums = [] of Album
-    @songs = [] of Peridot::MPD::Song
+    @songs = [] of Song
     @playlists = [] of String
   end
 
@@ -295,7 +295,7 @@ struct Peridot::MPD::Library
           next
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_SONG
           song = LibMpdClient.mpd_entity_get_song(entity)
-          import_metadata(Peridot::MPD::Song.new(@connection, song))
+          import_metadata(song)
         when LibMpdClient::MpdEntityType::MPD_ENTITY_TYPE_PLAYLIST
           playlist = LibMpdClient.mpd_entity_get_playlist(entity)
           path = String.new(LibMpdClient.mpd_playlist_get_path(playlist))
@@ -307,7 +307,8 @@ struct Peridot::MPD::Library
     end
   end
 
-  private def import_metadata(song : Peridot::MPD::Song)
+  private def import_metadata(mpd_song : LibMpdClient::MpdSong*)
+    song = get_song(mpd_song)
     artist_name = song.artist
     album_name = song.album
     artist = get_artist(artist_name)
@@ -316,6 +317,14 @@ struct Peridot::MPD::Library
     artist.songs << song
     album.songs << song
     @songs << song
+  end
+
+  private def get_song(song : LibMpdClient::MpdSong*) : Peridot::MPD::Library::Song
+    uri = String.new(LibMpdClient.mpd_song_get_uri(song))
+    title = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_TITLE, 0))
+    album = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ALBUM, 0))
+    artist = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ARTIST, 0))
+    Peridot::MPD::Library::Song.new(uri, title, album, artist)
   end
 
   private def get_artist(name : String) : Peridot::MPD::Library::Artist
@@ -342,20 +351,29 @@ end
 struct Peridot::MPD::Library::Album
   getter name : String
   property artist : Artist
-  property songs : Array(Peridot::MPD::Song)
+  property songs : Array(Song)
 
   def initialize(@name : String, @artist : Artist)
-    @songs = [] of Peridot::MPD::Song
+    @songs = [] of Song
   end
 end
 
 struct Peridot::MPD::Library::Artist
   getter name : String
   property albums : Array(Album)
-  property songs : Array(Peridot::MPD::Song)
+  property songs : Array(Song)
 
   def initialize(@name : String)
     @albums = [] of Album
-    @songs = [] of Peridot::MPD::Song
+    @songs = [] of Song
   end
+end
+
+struct Peridot::MPD::Library::Song
+  getter uri : String
+  getter title : String
+  getter album : String
+  getter artist : String
+
+  def initialize(@uri : String, @title : String, @album : String, @artist : String); end
 end

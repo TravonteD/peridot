@@ -2,14 +2,12 @@ require "./spec_helper"
 require "../src/mpd"
 
 describe Peridot::MPD::Library::Artist do
-  describe ".new" do
-    it "takes a name" do
-      artist = Peridot::MPD::Library::Artist.new("test_artist")
+  it "takes a name" do
+    artist = Peridot::MPD::Library::Artist.new("test_artist")
 
-      result = artist.name
+    result = artist.name
 
-      result.should eq "test_artist"
-    end
+    result.should eq "test_artist"
   end
 
   describe "#albums" do
@@ -23,26 +21,24 @@ describe Peridot::MPD::Library::Artist do
   end
 
   describe "#songs" do
-    it "returns an array of Peridot::MPD::Song" do
+    it "returns an array of Peridot::MPD::Library::Song" do
       artist = Peridot::MPD::Library::Artist.new("test_artist")
 
       result = artist.songs
 
-      result.should be_a(Array(Peridot::MPD::Song))
+      result.should be_a(Array(Peridot::MPD::Library::Song))
     end
   end
 end
 
 describe Peridot::MPD::Library::Album do
-  describe ".new" do
-    it "takes a name" do
-      artist = Peridot::MPD::Library::Artist.new("test_artist")
-      album = Peridot::MPD::Library::Album.new("test_album", artist)
+  it "has a name" do
+    artist = Peridot::MPD::Library::Artist.new("test_artist")
+    album = Peridot::MPD::Library::Album.new("test_album", artist)
 
-      result = album.name
+    result = album.name
 
-      result.should eq "test_album"
-    end
+    result.should eq "test_album"
   end
 
   describe "#artist" do
@@ -58,13 +54,39 @@ describe Peridot::MPD::Library::Album do
   end
 
   describe "#songs" do
-    it "returns an array of Peridot::MPD::Song" do
+    it "returns an array of Peridot::MPD::Library::Song" do
       artist = Peridot::MPD::Library::Artist.new("test_artist")
       album = Peridot::MPD::Library::Album.new("test_album", artist)
 
       result = album.songs
 
-      result.should be_a(Array(Peridot::MPD::Song))
+      result.should be_a(Array(Peridot::MPD::Library::Song))
     end
+  end
+end
+
+describe Peridot::MPD::Library::Song do
+  it "has a uri" do
+    song = Peridot::MPD::Library::Song.new("test_uri", "","","")
+
+    result = song.uri
+
+    result.should eq "test_uri"
+  end
+
+  it "has a album" do
+    song = Peridot::MPD::Library::Song.new("", "","album","")
+
+    result = song.album
+
+    result.should eq "album"
+  end
+
+  it "has a artist" do
+    song = Peridot::MPD::Library::Song.new("", "","","artist")
+
+    result = song.artist
+
+    result.should eq "artist"
   end
 end
