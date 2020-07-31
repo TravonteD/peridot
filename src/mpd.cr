@@ -67,19 +67,19 @@ struct Peridot::MPD
   end
 
   def repeat : Void
-    LibMpdClient.mpd_run_repeat(self.status)
+    LibMpdClient.mpd_run_repeat(@connection, !self.repeat?)
   end
 
   def random : Void
-    LibMpdClient.mpd_run_random(self.status)
+    LibMpdClient.mpd_run_random(@connection, !self.random?)
   end
 
   def single : Void
-    LibMpdClient.mpd_run_single(self.status)
+    LibMpdClient.mpd_run_single(@connection, !self.single?)
   end
 
   def consume : Void
-    LibMpdClient.mpd_run_consume(self.status)
+    LibMpdClient.mpd_run_consume(@connection, !self.consume?)
   end
 
   def state : String | Nil
