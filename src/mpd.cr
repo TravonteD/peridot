@@ -3,7 +3,6 @@ require "libmpdclient"
 module MpdClient
   abstract def play : Void
   abstract def play(id : UInt32) : Void
-  abstract def pause : Void
   abstract def toggle_pause : Void
   abstract def stop : Void
   abstract def next : Void
@@ -49,10 +48,6 @@ struct Peridot::MPD
 
   def play(pos : UInt32) : Void
     LibMpdClient.mpd_run_play_pos(@connection, pos)
-  end
-
-  def pause : Void
-    LibMpdClient.mpd_run_pause(@connection)
   end
 
   def toggle_pause : Void

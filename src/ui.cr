@@ -60,6 +60,11 @@ class Peridot::UI
     @windows = {} of Symbol => Window
     setup_main_window
     create_child_windows
+    create_commands
+  end
+
+  def command(name : String, *args)
+    @command[name].call(*args)
   end
 
   def empty
@@ -171,6 +176,18 @@ class Peridot::UI
         h: status_height
       }
     }
+  end
+
+  private def create_commands
+    @commands = {
+      "move_up" => ->(w : Symbol) { self.move_up(w) },
+      "move_down" => ->(w : Symbol) { self.move_down(w) },
+      "play" => ->{ @mpd.play },
+      "toggle_pause" => ->{ @mpd.toggle_pause },
+      "stop" => ->{ @mpd.stop },
+      "next" => ->{ @mpd.next },
+      "previous" => ->{ @mpd.previous },
+    }.as(Hash(String, Proc(Nil) | Proc(Symbol, Nil)))
   end
 end
 
