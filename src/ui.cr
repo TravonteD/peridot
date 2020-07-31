@@ -58,13 +58,14 @@ class Peridot::UI
   def initialize(@mpd : MpdClient, @w : UIClient)
     @border = Peridot::TBorder.new(@w)
     @windows = {} of Symbol => Window
+    @commands = {} of String => Proc(Nil)
     setup_main_window
     create_child_windows
     create_commands
   end
 
-  def command(name : String, *args)
-    @command[name].call(*args)
+  def command(name : String)
+    @commands[name].call
   end
 
   def empty
@@ -75,14 +76,14 @@ class Peridot::UI
     @w.clear
   end
 
-  def move_down(window_name : Symbol)
-    @windows[window_name].selected_line += 1 unless @windows[window_name].selected_line == (@windows[window_name].lines.size - 1)
-    @windows[window_name].draw
+  def move_down
+    @windows[@current_window].selected_line += 1 unless @windows[@current_window].selected_line == (@windows[@current_window].lines.size - 1)
+    @windows[@current_window].draw
   end
 
-  def move_up(window_name : Symbol)
-    @windows[window_name].selected_line -= 1 unless @windows[window_name].selected_line == 0
-    @windows[window_name].draw
+  def move_up
+    @windows[@current_window].selected_line -= 1 unless @windows[@current_window].selected_line == 0
+    @windows[@current_window].draw
   end
 
   def redraw
@@ -137,7 +138,10 @@ class Peridot::UI
     @primary_window = :queue
 
     # Move to the first line in interactive windows
-    [:queue, :song, :album, :artist, :library, :playlist].each { |x| move_down(x) }
+    [:queue, :song, :album, :artist, :library, :playlist].each do |x|
+      @windows[x].selected_line += 1
+      @windows[x].draw
+    end
   end
 
   private def calculate_window_dimensions
@@ -180,14 +184,14 @@ class Peridot::UI
 
   private def create_commands
     @commands = {
-      "move_up" => ->(w : Symbol) { self.move_up(w) },
-      "move_down" => ->(w : Symbol) { self.move_down(w) },
+      "move_up" => ->{ self.move_up },
+      "move_down" => ->{ self.move_down },
       "play" => ->{ @mpd.play },
       "toggle_pause" => ->{ @mpd.toggle_pause },
       "stop" => ->{ @mpd.stop },
       "next" => ->{ @mpd.next },
       "previous" => ->{ @mpd.previous },
-    }.as(Hash(String, Proc(Nil) | Proc(Symbol, Nil)))
+    }.as(Hash(String, Proc(Nil)))
   end
 end
 
