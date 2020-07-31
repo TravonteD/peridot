@@ -187,7 +187,7 @@ class Peridot::UI
       "move_up" => ->{ self.move_up },
       "move_down" => ->{ self.move_down },
       "play" => ->{ @mpd.play },
-      "toggle_pause" => ->{ @mpd.toggle_pause },
+      "toggle_pause" => ->{ (@mpd.state == "stopped") ? @mpd.play : @mpd.toggle_pause },
       "stop" => ->{ @mpd.stop },
       "next" => ->{ @mpd.next },
       "previous" => ->{ @mpd.previous },
