@@ -1,6 +1,40 @@
 require "libmpdclient"
 
+module MpdClient
+  abstract def now_playing_stats : Array(String)
+  abstract def formatted_status : String
+  abstract def play : Void
+  abstract def play(id : UInt32) : Void
+  abstract def pause : Void
+  abstract def toggle_pause : Void
+  abstract def stop : Void
+  abstract def next : Void
+  abstract def previous : Void
+  abstract def repeat : Void
+  abstract def random : Void
+  abstract def single : Void
+  abstract def consume : Void
+  abstract def state : String | Nil
+  abstract def volume : Int32
+  abstract def repeat? : Bool
+  abstract def random? : Bool
+  abstract def single? : Bool
+  abstract def consume? : Bool
+  abstract def elapsed_time : Int32
+  abstract def total_time : Int32
+  abstract def bit_rate : Int32
+  abstract def current_song : Peridot::MPD::Song | Nil
+  abstract def queue_songs : Array(Peridot::MPD::Song)
+  abstract def queue_length : UInt32
+  abstract def queue_add(uri : String) : Void
+  abstract def artists : Array(Peridot::MPD::Library::Artist)
+  abstract def albums : Array(Peridot::MPD::Library::Album)
+  abstract def songs : Array(Peridot::MPD::Song)
+end
+
 struct Peridot::MPD
+  include MpdClient
+
   getter :queue
   getter :library
 

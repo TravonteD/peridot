@@ -28,7 +28,7 @@ class Peridot::UI
   getter current_window : Symbol | Nil
   property primary_window : Symbol | Nil
 
-  def initialize(@mpd : Peridot::MPD)
+  def initialize(@mpd : MpdClient)
     @w = Peridot::TWindow.new
     @border = Border.new(@w)
     @songs = [] of String
@@ -253,7 +253,7 @@ class Peridot::UI::Window
 end
 
 class Peridot::UI::StatusWindow < Peridot::UI::Window
-  def initialize(@mpd : Peridot::MPD, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+  def initialize(@mpd : MpdClient, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     super(@mpd.formatted_status, dimensions, @mpd.now_playing_stats)
   end
 
@@ -265,7 +265,7 @@ class Peridot::UI::StatusWindow < Peridot::UI::Window
 end
 
 class Peridot::UI::QueueWindow < Peridot::UI::Window
-  def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+  def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     super("Queue (#{@mpd.queue_songs.size} Songs)", @dimensions, formatted_songs)
   end
 
@@ -289,7 +289,7 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
 end
 
 class Peridot::UI::SongWindow < Peridot::UI::Window
-  def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+  def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     @songs = @mpd.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Song))
     super("Songs", @dimensions, formatted_songs)
   end
@@ -310,7 +310,7 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
 end
 
 class Peridot::UI::AlbumWindow < Peridot::UI::Window
-  def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+  def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     @albums = @mpd.albums.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Album))
     super("Albums", @dimensions, formatted_albums)
   end
@@ -333,7 +333,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
 end
 
 class Peridot::UI::ArtistWindow < Peridot::UI::Window
-  def initialize(@mpd : Peridot::MPD, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+  def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
     @artists = @mpd.artists.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Artist))
     super("Artists", @dimensions, formatted_artists)
   end
