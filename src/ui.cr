@@ -117,7 +117,7 @@ class Peridot::UI
 
   private def setup_main_window
     @w.set_output_mode(OUTPUT_NORMAL)
-    @w.set_primary_colors(CONFIG["colors"]["foreground"].as_i, CONFIG["colors"]["background"].as_i)
+    @w.set_primary_colors(CONFIG.colors["foreground"], CONFIG.colors["background"])
     @w.clear
     @w << @border
   end
@@ -269,7 +269,7 @@ class Peridot::UI::Window
 
     lines[@offset..].each.with_index do |line, row|
       if row == selected_index
-        write_line(line, row + 1, CONFIG["colors"]["foreground_select"].as_i, CONFIG["colors"]["background_select"].as_i)
+        write_line(line, row + 1, CONFIG.colors["foreground_select"], CONFIG.colors["background_select"])
       else
         write_line(line, row + 1)
       end
@@ -278,11 +278,11 @@ class Peridot::UI::Window
   end
 
   def select
-    @border.foreground = CONFIG["colors"]["foreground_select"].as_i
+    @border.foreground = CONFIG.colors["foreground_select"]
   end
 
   def deselect
-    @border.foreground = CONFIG["colors"]["foreground"].as_i
+    @border.foreground = CONFIG.colors["foreground"]
   end
 
   # Defined Here to be overriden in child classes
