@@ -36,7 +36,7 @@ struct Peridot::MPD
   getter :library
 
   def initialize(host : String, port : Int32)
-    @connection = LibMpdClient.mpd_connection_new(host, port, 1000) # Timeout is 1 second for now
+    @connection = LibMpdClient.mpd_connection_new(host, port, 0)
     @library = Library.new(@connection)
     @queue = Queue.new(@connection)
     @library.init
@@ -161,7 +161,12 @@ struct Peridot::MPD
   end
 
   private def status : LibMpdClient::MpdStatus*
-    LibMpdClient.mpd_run_status(@connection)
+    status = LibMpdClient.mpd_run_status(@connection)
+    if status.null?
+      @connection = LibMpdClient.mpd_connection_new(CONFIG.server.host, CONFIG.server.port, 0)
+      status = LibMpdClient.mpd_run_status(@connection)
+    end
+    status
   end
 end
 
@@ -170,6 +175,10 @@ struct Peridot::MPD::Queue
 
   def length : UInt32
     status = LibMpdClient.mpd_run_status(@connection)
+    if status.null?
+      @connection = LibMpdClient.mpd_connection_new(CONFIG.server.host, CONFIG.server.port, 0)
+      status = LibMpdClient.mpd_run_status(@connection)
+    end
     LibMpdClient.mpd_status_get_queue_length(status)
   end
 
