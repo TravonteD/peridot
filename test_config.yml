@@ -10,6 +10,8 @@ keys:
   "z": "toggle_random"
   "y": "toggle_single"
   "R": "toggle_consume"
+  "+": "volume_up"
+  "-": "volume_down"
 
 colors:
   foreground: 8

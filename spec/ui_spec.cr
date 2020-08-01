@@ -36,32 +36,17 @@ class DummyMpdClient
     @played = {true, id}
   end
 
-  def pause : Void
-  end
-
-  def toggle_pause : Void
-  end
-
-  def stop : Void
-  end
-
-  def next : Void
-  end
-
-  def previous : Void
-  end
-
-  def repeat : Void
-  end
-
-  def random : Void
-  end
-
-  def single : Void
-  end
-
-  def consume : Void
-  end
+  def pause : Void; end
+  def toggle_pause : Void; end
+  def stop : Void; end
+  def next : Void; end
+  def previous : Void; end
+  def repeat : Void; end
+  def random : Void; end
+  def single : Void; end
+  def consume : Void; end
+  def increase_volume : Void; end
+  def decrease_volume : Void; end
 
   def repeat? : Bool
     @repeat

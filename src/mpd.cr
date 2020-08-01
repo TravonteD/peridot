@@ -13,6 +13,8 @@ module MpdClient
   abstract def consume : Void
   abstract def state : String | Nil
   abstract def volume : Int32
+  abstract def increase_volume : Void
+  abstract def decrease_volume : Void
   abstract def repeat? : Bool
   abstract def random? : Bool
   abstract def single? : Bool
@@ -158,6 +160,18 @@ struct Peridot::MPD
 
   def songs : Array(Peridot::MPD::Library::Song)
     @library.songs
+  end
+
+  def increase_volume : Void
+    current_volume = self.volume
+    return if current_volume == 100
+    LibMpdClient.mpd_run_set_volume(@connection, current_volume + 2)
+  end
+
+  def decrease_volume : Void
+    current_volume = self.volume
+    return if current_volume <= 0
+    LibMpdClient.mpd_run_set_volume(@connection, current_volume - 2)
   end
 
   private def status : LibMpdClient::MpdStatus*

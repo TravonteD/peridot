@@ -194,7 +194,9 @@ class Peridot::UI
       "toggle_repeat" => ->{ @mpd.repeat },
       "toggle_single" => ->{ @mpd.single },
       "toggle_consume" => ->{ @mpd.consume },
-      "toggle_random" => ->{ @mpd.random }
+      "toggle_random" => ->{ @mpd.random },
+      "volume_up" => ->{ @mpd.increase_volume },
+      "volume_down" => ->{ @mpd.decrease_volume }
     }.as(Hash(String, Proc(Nil)))
   end
 end
