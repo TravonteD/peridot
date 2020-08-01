@@ -151,7 +151,7 @@ class Peridot::UI
     library_width = playlist_width = 15
     library_height = 5
     queue_width -= library_width
-    status_height = 4
+    status_height = 5
     queue_height = max_height - 2 - status_height
     playlist_height = max_height - 2 - status_height - library_height
     {
@@ -334,10 +334,26 @@ class Peridot::UI::StatusWindow < Peridot::UI::Window
 
   private def formatted_stats : Array(String)
     if current_song = @mpd.current_song
-      [current_song.title, "#{current_song.album}, #{current_song.artist}"]
+      [current_song.title, "#{current_song.album}, #{current_song.artist}", formatted_time]
     else
       ["", "", ""]
     end
+  end
+
+  private def formatted_time : String
+    total_time = @mpd.total_time
+    elapsed_time = @mpd.elapsed_time
+    diff_time = total_time - elapsed_time
+    total_minutes, total_seconds = total_time.divmod(60)
+    elapsed_minutes, elapsed_seconds = elapsed_time.divmod(60)
+    diff_minutes, diff_seconds = diff_time.divmod(60)
+    sprintf("%s:%s/%s:%s (-%s:%s)", 
+            elapsed_minutes, 
+            (elapsed_seconds < 10) ? "0#{elapsed_seconds}" : elapsed_seconds, 
+            total_minutes, 
+            (total_seconds < 10) ? "0#{total_seconds}" : total_seconds,
+            diff_minutes,
+            (diff_seconds < 10) ? "0#{diff_seconds}" : diff_seconds,)
   end
 end
 

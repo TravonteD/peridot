@@ -70,6 +70,17 @@ describe Peridot::UI::StatusWindow do
 
     window.@lines.should eq expected
   end
+
+  it "shows the time information" do
+    one_minute = UInt32.new(60)
+    three_minutes = one_minute * 3
+    client = DummyMpdClient.new(total_time: three_minutes, elapsed_time: one_minute)
+    dimensions = {x: 1, y: 1, w: 1, h: 1}
+    expected = "1:00/3:00 (-2:00)"
+    window = Peridot::UI::StatusWindow.new(client, dimensions)
+
+    window.@lines.last.should eq expected
+  end
 end
 
 describe Peridot::UI::QueueWindow do

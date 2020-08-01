@@ -120,11 +120,11 @@ struct Peridot::MPD
   end
 
   def elapsed_time : UInt32
-    LibMpdClient.mpd_status_get_elapsed_time_ms(self.status)
+    LibMpdClient.mpd_status_get_elapsed_time(self.status)
   end
 
   def total_time : UInt32
-    LibMpdClient.mpd_status_get_total_time_ms(self.status)
+    LibMpdClient.mpd_status_get_total_time(self.status)
   end
 
   # rate is in kilobits
