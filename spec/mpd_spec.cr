@@ -1,5 +1,4 @@
 require "./spec_helper"
-require "../src/mpd"
 
 describe Peridot::MPD::Library::Artist do
   it "takes a name" do
