@@ -9,8 +9,8 @@ class DummyMpdClient
   include MpdClient
 
   getter state : String | Nil
-  getter elapsed_time : Int32
-  getter total_time : Int32
+  getter elapsed_time : UInt32
+  getter total_time : UInt32
   getter bit_rate : Int32
   getter volume : Int32
   getter queue_length : UInt32

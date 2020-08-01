@@ -19,8 +19,8 @@ module MpdClient
   abstract def random? : Bool
   abstract def single? : Bool
   abstract def consume? : Bool
-  abstract def elapsed_time : Int32
-  abstract def total_time : Int32
+  abstract def elapsed_time : UInt32
+  abstract def total_time : UInt32
   abstract def bit_rate : Int32
   abstract def current_song : Peridot::MPD::Library::Song | Nil
   abstract def queue_songs : Array(Peridot::MPD::Library::Song)
@@ -119,12 +119,12 @@ struct Peridot::MPD
     LibMpdClient.mpd_status_get_consume(self.status)
   end
 
-  def elapsed_time : Int32
-    LibMpdClient.mpd_status_get_elapsed_time(self.status)
+  def elapsed_time : UInt32
+    LibMpdClient.mpd_status_get_elapsed_time_ms(self.status)
   end
 
-  def total_time : Int32
-    LibMpdClient.mpd_status_get_total_time(self.status)
+  def total_time : UInt32
+    LibMpdClient.mpd_status_get_total_time_ms(self.status)
   end
 
   # rate is in kilobits
