@@ -15,8 +15,8 @@ A modern terminal MPD (Music Player Daemon) client
 
 1. Install the dependencies from you package manager
 2. `cd` into the directory and run `shards install`
-3. run `shards build`
-4. The binary will be in the `bin/` directory
+3. run `shards build --release`
+4. The binary will be in the `bin/` directory link it to either `$HOME/.local/bin` or `/usr/local/bin`
 
 ## Usage
 
@@ -24,14 +24,27 @@ A modern terminal MPD (Music Player Daemon) client
 Run the command `peridot`
 
 ### Keybindings
-- "p" : toggle play/pause
-- "s" : stop
-- "j": move down
-- "k": move up
-- "ctrl-l": move to the library window
-- "ctrl-p": move to the playlist window
-- "ctrl-q": move to the primary window
-- "Enter" : play the selection
+- "quit": "q"
+- "jump to library window": "CTRL-l"
+- "jump to primary window": "CTRL-q"
+- "jump to play-list window": "CTRL-p"
+- "move_down": "j"
+- "move_up": "k"
+- "previous": "<"
+- "next": ">"
+- "toggle_pause": "p"
+- "stop": "s"
+- "toggle_repeat": "r"
+- "toggle_random": "z"
+- "toggle_single": "y"
+- "toggle_consume": "R"
+- "volume_up": "+"
+- "volume_down": "-"
+- "seek_forward": "f"
+- "seek_backward": "b"
+- "queue_remove": "D"
+- "filter": "l" # Drills down into the directory
+- "unfilter": "h" # Goes up the directory structure
 
 ## Development
 
@@ -44,3 +57,7 @@ Install the dependencies and run `shards install`
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Contributors
+
+- [@TravonteD](https://github.com/travonted) - Creator and Maintainer
