@@ -316,13 +316,9 @@ struct Peridot::MPD::Library
   end
 
   private def get_album(name : String, artist : Peridot::MPD::Library::Artist) : Peridot::MPD::Library::Album
-    if @albums.find { |x| x.name == name }
-      @albums.find { |x| x.name == name }.not_nil!
-    else
-      album = Peridot::MPD::Library::Album.new(name, artist)
-      @albums << album
-      album
-    end
+    album = Peridot::MPD::Library::Album.new(name, artist)
+    @albums << album
+    album
   end
 end
 

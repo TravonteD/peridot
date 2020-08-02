@@ -183,6 +183,38 @@ class Peridot::UI
   end
 
   private def create_commands
+    filter_command = Proc(Nil).new do
+      return if @current_window != @primary_window
+      next_window = case @primary_window.not_nil!
+                    when :artist
+                      :album
+                    when :album
+                      :song
+                    else
+                      @primary_window
+                    end
+        return if @primary_window == next_window
+        @windows[next_window].filter(@windows[@current_window].current_line)
+        self.select_window(next_window.not_nil!)
+        @primary_window = next_window
+        nil
+    end
+    unfilter_command = Proc(Nil).new do
+      return if @current_window != @primary_window
+      next_window = case @primary_window.not_nil!
+                    when :album
+                      :artist
+                    when :song
+                      :album
+                    else
+                      @primary_window
+                    end
+        return if @primary_window == next_window
+        @windows[@current_window].unfilter
+        self.select_window(next_window.not_nil!)
+        @primary_window = next_window
+        nil
+    end
     @commands = {
       "move_up" => ->{ self.move_up },
       "move_down" => ->{ self.move_down },
@@ -199,7 +231,9 @@ class Peridot::UI
       "volume_down" => ->{ @mpd.decrease_volume },
       "seek_forward" => ->{ @mpd.seek_forward },
       "seek_backward" => ->{ @mpd.seek_backward },
-      "queue_remove" => ->{ @windows[:queue].as(Peridot::UI::QueueWindow).remove }
+      "queue_remove" => ->{ @windows[:queue].as(Peridot::UI::QueueWindow).remove },
+      "filter" => filter_command,
+      "unfilter" => unfilter_command
      }.as(Hash(String, Proc(Nil)))
   end
 end
@@ -304,7 +338,10 @@ class Peridot::UI::Window
   def action
   end
 
-  def filter
+  def filter(arg)
+  end
+
+  def unfilter
   end
 
   def current_line : String
@@ -461,7 +498,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
   end
 
   private def formatted_albums
-    @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
+    @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }.uniq
   end
 end
 
