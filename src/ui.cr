@@ -428,6 +428,7 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
 
   def update
     @lines = formatted_songs
+    @title = "Queue (#{@mpd.queue_length} Songs)"
     draw
   end
 
