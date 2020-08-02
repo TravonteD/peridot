@@ -50,6 +50,8 @@ class DummyMpdClient
   def consume : Void; end
   def increase_volume : Void; end
   def decrease_volume : Void; end
+  def seek_forward : Void; end
+  def seek_backward : Void; end
 
   def repeat? : Bool
     @repeat

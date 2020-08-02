@@ -15,6 +15,8 @@ module MpdClient
   abstract def volume : Int32
   abstract def increase_volume : Void
   abstract def decrease_volume : Void
+  abstract def seek_forward : Void
+  abstract def seek_backward : Void
   abstract def repeat? : Bool
   abstract def random? : Bool
   abstract def single? : Bool
@@ -172,6 +174,26 @@ struct Peridot::MPD
     current_volume = self.volume
     return if current_volume <= 0
     LibMpdClient.mpd_run_set_volume(@connection, current_volume - 2)
+  end
+
+  def seek_forward : Void
+    song_pos = UInt32.new(@queue.songs.index(self.current_song).not_nil!)
+    if self.elapsed_time > (total_time - 10)
+      LibMpdClient.mpd_run_seek_pos(@connection, song_pos, self.total_time)
+    else
+      new_time = self.elapsed_time + 10
+      LibMpdClient.mpd_run_seek_pos(@connection, song_pos, new_time)
+    end
+  end
+
+  def seek_backward : Void
+    song_pos = UInt32.new(@queue.songs.index(self.current_song).not_nil!)
+    if self.elapsed_time < 10
+      LibMpdClient.mpd_run_seek_pos(@connection, song_pos, 0)
+    else
+      new_time = self.elapsed_time - 10
+      LibMpdClient.mpd_run_seek_pos(@connection, song_pos, new_time)
+    end
   end
 
   private def status : LibMpdClient::MpdStatus*

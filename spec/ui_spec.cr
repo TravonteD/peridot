@@ -65,7 +65,7 @@ describe Peridot::UI::StatusWindow do
   it "shows the now playing information" do
     client = DummyMpdClient.new
     dimensions = {x: 1, y: 1, w: 1, h: 1}
-    expected = ["test_title", "test_album, test_artist"]
+    expected = ["test_title", "test_album, test_artist", "0:00/0:00 (-0:00)"]
     window = Peridot::UI::StatusWindow.new(client, dimensions)
 
     window.@lines.should eq expected

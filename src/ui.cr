@@ -196,8 +196,10 @@ class Peridot::UI
       "toggle_consume" => ->{ @mpd.consume },
       "toggle_random" => ->{ @mpd.random },
       "volume_up" => ->{ @mpd.increase_volume },
-      "volume_down" => ->{ @mpd.decrease_volume }
-    }.as(Hash(String, Proc(Nil)))
+      "volume_down" => ->{ @mpd.decrease_volume },
+      "seek_forward" => ->{ @mpd.seek_forward },
+      "seek_backward" => ->{ @mpd.seek_backward }
+     }.as(Hash(String, Proc(Nil)))
   end
 end
 

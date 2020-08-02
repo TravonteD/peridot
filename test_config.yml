@@ -12,6 +12,8 @@ keys:
   "R": "toggle_consume"
   "+": "volume_up"
   "-": "volume_down"
+  "f": "seek_forward"
+  "b": "seek_backward"
 
 colors:
   foreground: 8
