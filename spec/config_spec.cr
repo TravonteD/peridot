@@ -4,8 +4,8 @@ require "../src/config.cr"
 dummy_config = <<-END
 ---
 keys:
-  j: "move_down" 
-  k: "move_up"
+  move_down: "j" 
+  move_up: "k"
 colors:
   foreground: 8
   background: 0
@@ -19,8 +19,8 @@ describe Peridot::Config do
     it "parses the keybindings" do
       config = Peridot::Config.parse(dummy_config)
 
-      config.keys["j"].should eq "move_down"
-      config.keys["k"].should eq "move_up"
+      config.keys.dig("j").should eq "move_down"
+      config.keys.dig("k").should eq "move_up"
     end
 
     it "parses colors" do

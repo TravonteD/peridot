@@ -7,9 +7,20 @@ struct Server
   property port : Int32
 end
 
+struct Keybinding::Format
+  def self.from_yaml(ctx : YAML::ParseContext, node : YAML::Nodes::Node) : Hash(String, String)
+    result = {} of String => String
+    node.as(YAML::Nodes::Mapping).each do |k, v|
+      result[v.as(YAML::Nodes::Scalar).value] = k.as(YAML::Nodes::Scalar).value
+    end
+    result
+  end
+end
+
 struct Config
   include YAML::Serializable
 
+  @[YAML::Field(converter: Keybinding::Format)]
   property keys : Hash(String, String)
   property colors : Hash(String, Int32)
   property server : Server
