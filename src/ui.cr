@@ -96,7 +96,7 @@ class Peridot::UI
   end
 
   def poll
-    @w.poll
+    @w.peek(1000)
   end
 
   def shutdown
