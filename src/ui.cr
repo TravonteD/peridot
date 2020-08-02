@@ -219,6 +219,7 @@ class Peridot::UI::Window
     add_title
     @lines = [] of String
     @selected_line = -1
+    @filtered = false
   end
 
   def initialize(@title : String, dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32), lines : Array(String))
@@ -229,6 +230,7 @@ class Peridot::UI::Window
     add_title
     @lines = lines
     @selected_line = -1
+    @filtered = false
   end
 
   def draw
@@ -300,6 +302,17 @@ class Peridot::UI::Window
 
   # Defined Here to be overriden in child classes
   def action
+  end
+
+  def filter
+  end
+
+  def current_line : String
+    @lines[@selected_line]
+  end
+
+  def filtered?
+    @filtered
   end
 
   private def add_title
@@ -395,6 +408,22 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
   def action
     @mpd.queue_add(@songs[@selected_line].uri)
     @mpd.play(UInt32.new(@mpd.queue_length - 1))
+  end
+
+  def filter(album_name : String)
+    @filtered = true
+    @songs = @songs.select { |x| x.album == album_name }
+    @lines = formatted_songs
+    @title = "Songs (#{album_name})"
+    draw
+  end
+
+  def unfilter
+    @filtered = false
+    @songs = @mpd.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Library::Song))
+    @lines = formatted_songs
+    @title = "Songs"
+    draw
   end
 
   private def formatted_songs

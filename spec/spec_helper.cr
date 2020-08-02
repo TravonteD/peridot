@@ -16,6 +16,7 @@ class DummyMpdClient
   getter queue_length : UInt32
   getter current_song : Peridot::MPD::Library::Song | Nil
   getter queue_songs : Array(Peridot::MPD::Library::Song)
+  getter songs : Array(Peridot::MPD::Library::Song)
 
   def initialize(@repeat : Bool = false,
                   @random : Bool = false,
@@ -28,6 +29,7 @@ class DummyMpdClient
                   @queue_length : UInt32 = UInt32.new(0),
                   @current_song : Peridot::MPD::Library::Song | Nil = Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist"),
                   @queue_songs : Array(Peridot::MPD::Library::Song) = [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")],
+                  @songs : Array(Peridot::MPD::Library::Song) = [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")],
                   @state : String | Nil = nil)
   end
 
@@ -98,10 +100,6 @@ class DummyMpdClient
     album = Peridot::MPD::Library::Album.new("test_album", artist)
     album.songs = songs
     [album]
-  end
-
-  def songs : Array(Peridot::MPD::Library::Song)
-    [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")]
   end
 end
 
