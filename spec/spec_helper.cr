@@ -30,6 +30,7 @@ class DummyMpdClient
                   @current_song : Peridot::MPD::Library::Song | Nil = Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist"),
                   @queue_songs : Array(Peridot::MPD::Library::Song) = [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")],
                   @songs : Array(Peridot::MPD::Library::Song) = [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")],
+                  @albums : Array(Peridot::MPD::Library::Album) = [] of Peridot::MPD::Library::Album,
                   @state : String | Nil = nil)
   end
 
@@ -92,6 +93,7 @@ class DummyMpdClient
   end
 
   def albums : Array(Peridot::MPD::Library::Album)
+    return @albums unless @albums.empty?
     artist = Peridot::MPD::Library::Artist.new("test_artist")
     songs = [
       Peridot::MPD::Library::Song.new("test1", "", "", ""),

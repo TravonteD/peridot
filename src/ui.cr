@@ -444,6 +444,22 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
     @mpd.play(UInt32.new(@mpd.queue_length - (songs.size)))
   end
 
+  def filter(artist_name : String)
+    @filtered = true
+    @albums = @albums.select { |x| x.artist.name == artist_name }
+    @lines = formatted_albums
+    @title = "Albums (#{artist_name})"
+    draw
+  end
+
+  def unfilter
+    @filtered = false
+    @albums = @mpd.albums.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Album))
+    @lines = formatted_albums
+    @title = "Albums"
+    draw
+  end
+
   private def formatted_albums
     @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
   end
