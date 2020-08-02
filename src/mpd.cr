@@ -135,8 +135,10 @@ struct Peridot::MPD
     LibMpdClient.mpd_status_get_bit_rate(self.status)
   end
 
-  def current_song : Peridot::MPD::Library::Song
+  def current_song : Peridot::MPD::Library::Song | Nil
     song = LibMpdClient.mpd_run_current_song(@connection)
+    return if song.null?
+
     uri = String.new(LibMpdClient.mpd_song_get_uri(song))
     @queue.songs.find { |x| x.uri == uri }.not_nil!
   end

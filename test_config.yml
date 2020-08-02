@@ -14,6 +14,7 @@ keys:
   "-": "volume_down"
   "f": "seek_forward"
   "b": "seek_backward"
+  "D": "queue_remove"
 
 colors:
   foreground: 8

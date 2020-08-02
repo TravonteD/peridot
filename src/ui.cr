@@ -198,7 +198,8 @@ class Peridot::UI
       "volume_up" => ->{ @mpd.increase_volume },
       "volume_down" => ->{ @mpd.decrease_volume },
       "seek_forward" => ->{ @mpd.seek_forward },
-      "seek_backward" => ->{ @mpd.seek_backward }
+      "seek_backward" => ->{ @mpd.seek_backward },
+      "queue_remove" => ->{ @windows[:queue].as(Peridot::UI::QueueWindow).remove }
      }.as(Hash(String, Proc(Nil)))
   end
 end
@@ -366,6 +367,13 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
 
   def action
     @mpd.play(UInt32.new(@selected_line))
+  end
+
+  def remove : Void
+    @mpd.queue_delete(UInt32.new(@selected_line))
+
+    # Move up if deleting the last item in the queue
+    @selected_line -= 1 unless @selected_line.zero?
   end
 
   def update

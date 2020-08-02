@@ -34,7 +34,6 @@ def main
         case ui.current_window
         when :queue, :song, :album
           ui.windows[ui.current_window].action
-          ui.windows[:queue].update
         when :artist
           ui.windows[:artist].action
           ui.windows[:queue].update
@@ -61,6 +60,7 @@ def main
       end
     end
 
+    ui.windows[:queue].update
     ui.update_status
     ui.redraw
   end

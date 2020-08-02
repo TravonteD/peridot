@@ -115,6 +115,21 @@ describe Peridot::UI::QueueWindow do
       client.@played.should eq expected
     end
   end
+
+  describe "#remove" do
+    describe "when the selected line is last in the queue" do
+      it "moves to the the new last item" do
+        client = DummyMpdClient.new(queue_length: 2)
+        dimensions = {x: 1, y: 1, w: 1, h: 1}
+        window = Peridot::UI::QueueWindow.new(client, dimensions)
+        window.selected_line = 1
+
+        window.remove
+
+        window.selected_line.should eq 0
+      end
+    end
+  end
 end
 
 describe Peridot::UI::SongWindow do
