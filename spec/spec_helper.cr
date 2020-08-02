@@ -74,6 +74,11 @@ class DummyMpdClient
     @added = {true, uri}
   end
 
+  def queue_delete(pos : UInt32) : Void
+    @queue_length -= 1
+    @deleted = {true, pos}
+  end
+
   def artists : Array(Peridot::MPD::Library::Artist)
     artist = Peridot::MPD::Library::Artist.new("test_artist")
     songs = [

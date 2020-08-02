@@ -28,6 +28,7 @@ module MpdClient
   abstract def queue_songs : Array(Peridot::MPD::Library::Song)
   abstract def queue_length : UInt32
   abstract def queue_add(uri : String) : Void
+  abstract def queue_delete(pos : UInt32) : Void
   abstract def artists : Array(Peridot::MPD::Library::Artist)
   abstract def albums : Array(Peridot::MPD::Library::Album)
   abstract def songs : Array(Peridot::MPD::Library::Song)
@@ -152,6 +153,10 @@ struct Peridot::MPD
     @queue.add(uri)
   end
 
+  def queue_delete(pos : UInt32) : Void
+    @queue.delete(pos)
+  end
+
   def artists : Array(Peridot::MPD::Library::Artist)
     @library.artists
   end
@@ -235,6 +240,10 @@ struct Peridot::MPD::Queue
 
   def add(uri : String)
     LibMpdClient.mpd_run_add(@connection, uri)
+  end
+
+  def delete(pos : UInt32)
+    LibMpdClient.mpd_run_delete(@connection, pos)
   end
 end
 
