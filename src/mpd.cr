@@ -317,9 +317,12 @@ struct Peridot::MPD::Library
 
   private def get_album(name : String, artist : Peridot::MPD::Library::Artist) : Peridot::MPD::Library::Album
     if @albums.find { |x| x.name == name }
-      @albums.find { |x| x.name == name }.not_nil!
+      album = @albums.find { |x| x.name == name }.not_nil!
+      album.artists << artist unless album.artists.includes?(artist)
+      album
     else
-      album = Peridot::MPD::Library::Album.new(name, artist)
+      album = Peridot::MPD::Library::Album.new(name)
+      album.artists << artist
       @albums << album
       album
     end
@@ -328,11 +331,12 @@ end
 
 struct Peridot::MPD::Library::Album
   getter name : String
-  property artist : Artist
+  property artists : Array(Artist)
   property songs : Array(Song)
 
-  def initialize(@name : String, @artist : Artist)
+  def initialize(@name : String)
     @songs = [] of Song
+    @artists = [] of Artist
   end
 end
 

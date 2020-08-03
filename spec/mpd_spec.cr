@@ -32,30 +32,29 @@ end
 
 describe Peridot::MPD::Library::Album do
   it "has a name" do
-    artist = Peridot::MPD::Library::Artist.new("test_artist")
-    album = Peridot::MPD::Library::Album.new("test_album", artist)
+    album = Peridot::MPD::Library::Album.new("test_album")
 
     result = album.name
 
     result.should eq "test_album"
   end
 
-  describe "#artist" do
-    it "returns an array of Peridot::MPD::Library::Album" do
+  describe "#artists" do
+    it "returns an array of Peridot::MPD::Library::Artist" do
       artist = Peridot::MPD::Library::Artist.new("test_artist")
-      album = Peridot::MPD::Library::Album.new("test_album", artist)
+      album = Peridot::MPD::Library::Album.new("test_album")
+      album.artists << artist
 
-      result = album.artist
+      result = album.artists
 
-      result.should be_a(Peridot::MPD::Library::Artist)
-      result.should eq artist
+      result.should be_a(Array(Peridot::MPD::Library::Artist))
+      result.should eq [artist]
     end
   end
 
   describe "#songs" do
     it "returns an array of Peridot::MPD::Library::Song" do
-      artist = Peridot::MPD::Library::Artist.new("test_artist")
-      album = Peridot::MPD::Library::Album.new("test_album", artist)
+      album = Peridot::MPD::Library::Album.new("test_album")
 
       result = album.songs
 

@@ -434,7 +434,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
 
   def filter(artist_name : String)
     @filtered = true
-    @albums = @albums.select { |x| x.artist.name == artist_name }
+    @albums = @albums.select { |x| x.artists.map(&.name).includes?(artist_name) }
     @lines = formatted_albums
     @title = "Albums (#{artist_name})"
     draw

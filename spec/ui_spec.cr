@@ -243,10 +243,14 @@ describe Peridot::UI::AlbumWindow do
     it "filters the songs based on the given album name" do
       artist1 = Peridot::MPD::Library::Artist.new("artist1")
       artist2 = Peridot::MPD::Library::Artist.new("artist2")
-      album1 = Peridot::MPD::Library::Album.new("album1", artist1)
-      album2 = Peridot::MPD::Library::Album.new("album2", artist2)
-      album3 = Peridot::MPD::Library::Album.new("album3", artist1)
-      album4 = Peridot::MPD::Library::Album.new("album4", artist2)
+      album1 = Peridot::MPD::Library::Album.new("album1")
+      album2 = Peridot::MPD::Library::Album.new("album2")
+      album3 = Peridot::MPD::Library::Album.new("album3")
+      album4 = Peridot::MPD::Library::Album.new("album4")
+      album1.artists << artist1
+      album2.artists << artist2
+      album3.artists << artist1
+      album4.artists << artist2
       client = DummyMpdClient.new(albums: [album1, album2, album3, album4])
       dimensions = {x: 1, y: 1, w: 1, h: 1}
       window = Peridot::UI::AlbumWindow.new(client, dimensions)

@@ -99,7 +99,8 @@ class DummyMpdClient
       Peridot::MPD::Library::Song.new("test1", "", "", ""),
       Peridot::MPD::Library::Song.new("test2", "", "", "")
       ]
-    album = Peridot::MPD::Library::Album.new("test_album", artist)
+    album = Peridot::MPD::Library::Album.new("test_album")
+    album.artists << artist
     album.songs = songs
     [album]
   end
