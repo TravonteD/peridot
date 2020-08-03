@@ -449,7 +449,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
   end
 
   private def formatted_albums
-    @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }.uniq
+    @albums.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
   end
 end
 
