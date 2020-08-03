@@ -17,6 +17,7 @@ class DummyMpdClient
   getter current_song : Peridot::MPD::Library::Song | Nil
   getter queue_songs : Array(Peridot::MPD::Library::Song)
   getter songs : Array(Peridot::MPD::Library::Song)
+  getter playlists : Array(String)
 
   def initialize(@repeat : Bool = false,
                   @random : Bool = false,
@@ -31,7 +32,9 @@ class DummyMpdClient
                   @queue_songs : Array(Peridot::MPD::Library::Song) = [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")],
                   @songs : Array(Peridot::MPD::Library::Song) = [Peridot::MPD::Library::Song.new("test_uri", "test_title", "test_album", "test_artist")],
                   @albums : Array(Peridot::MPD::Library::Album) = [] of Peridot::MPD::Library::Album,
+                  @playlists : Array(String) = [] of String,
                   @state : String | Nil = nil)
+    @playlist_loaded = {false, ""}
   end
 
   def play : Void
@@ -70,6 +73,10 @@ class DummyMpdClient
 
   def consume? : Bool
     @consume
+  end
+
+  def playlist_load(name : String): Void
+    @playlist_loaded = {true, name}
   end
 
   def queue_add(uri : String) : Void

@@ -315,3 +315,27 @@ describe Peridot::UI::ArtistWindow do
     end
   end
 end
+
+describe Peridot::UI::PlaylistWindow do
+  it "displays the playlists in the library properly formatted" do
+    client = DummyMpdClient.new(playlists: ["playlist/test_playlist.m3u", "playlist/test_playlist.m3u"])
+    dimensions = {x: 1, y: 1, w: 1, h: 1}
+    window = Peridot::UI::PlaylistWindow.new(client, dimensions)
+
+    window.@lines.should eq ["test_playlist", "test_playlist"]
+  end
+
+  describe "#action" do
+      it "adds the selected artists songs to the queue" do
+        client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
+        dimensions = {x: 1, y: 1, w: 1, h: 1}
+        window = Peridot::UI::PlaylistWindow.new(client, dimensions)
+        window.selected_line = 0
+
+        window.action
+
+        expected = {true, "test_playlist0"}
+        client.@playlist_loaded.should eq expected
+      end
+  end
+end

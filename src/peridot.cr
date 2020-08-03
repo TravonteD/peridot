@@ -32,7 +32,7 @@ def main
         ui.select_window(:playlist)
       when Termbox::KEY_ENTER
         case ui.current_window
-        when :queue, :song, :album
+        when :queue, :song, :album, :playlist
           ui.windows[ui.current_window].action
         when :artist
           ui.windows[:artist].action

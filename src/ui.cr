@@ -1,4 +1,5 @@
 require "./ui/interface"
+require "path"
 
 class Peridot::UI
   getter windows : Hash(Symbol, Window)
@@ -75,7 +76,7 @@ class Peridot::UI
   private def create_child_windows
     dimensions = calculate_window_dimensions
     @windows[:library] = Peridot::UI::Window.new("Library", dimensions[:library], ["Queue", "Songs", "Artists", "Albums"])
-    @windows[:playlist] = Peridot::UI::Window.new("Playlists", dimensions[:playlist])
+    @windows[:playlist] = Peridot::UI::PlaylistWindow.new(@mpd, dimensions[:playlist])
     @windows[:status] = Peridot::UI::StatusWindow.new(@mpd, dimensions[:status])
     @windows.values.each { |x| @w << x.container }
 
@@ -230,8 +231,10 @@ class Peridot::UI::Window
     end
   end
 
+  # Note: This will truncate the lines if they extend beyond the containers boundary
   def write_line(text : String, line : Int32)
     text.chars.each.with_index do |char, column|
+      break if column == @container.width - 2
       @container << Cell.new(char, Position.new(column + 1, line))
     end
   end
@@ -239,6 +242,7 @@ class Peridot::UI::Window
   # Writes the line using the given colors
   def write_line(text : String, line : Int32, fg : Int32, bg : Int32)
     text.chars.each.with_index do |char, column|
+      break if column == @container.width - 2
       @container << Cell.new(char, Position.new(column + 1, line), fg, bg)
     end
   end
@@ -246,8 +250,8 @@ class Peridot::UI::Window
   # Note: This will truncate the lines if they extend beyond the containers boundary
   def write_lines(lines : Array(String))
     lines.each.with_index do |line, row|
+      break if row == @container.height - 2
       write_line(line, row + 1)
-      break if row + 1 == @container.height - 2
     end
   end
 
@@ -263,12 +267,12 @@ class Peridot::UI::Window
     selected_index -= @offset
 
     lines[@offset..].each.with_index do |line, row|
+      break if row == max_height
       if row == selected_index
         write_line(line, row + 1, CONFIG.colors["foreground_select"], CONFIG.colors["background_select"])
       else
         write_line(line, row + 1)
       end
-      break if row + 1 == max_height
     end
   end
 
@@ -468,5 +472,25 @@ class Peridot::UI::ArtistWindow < Peridot::UI::Window
 
   private def formatted_artists
     @artists.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
+  end
+end
+
+class Peridot::UI::PlaylistWindow < Peridot::UI::Window
+  def initialize(@mpd : MpdClient, @dimensions : NamedTuple(x: Int32, y: Int32, w: Int32, h: Int32))
+    @playlists = @mpd.playlists.as(Array(String))
+    super("Playlists", @dimensions, formatted_playlist)
+  end
+
+  def action
+    playlist_name = @lines[@selected_line]
+    @mpd.playlist_load(playlist_name)
+  end
+
+  private def formatted_playlist
+    @playlists.map do |x|
+      name = Path[x].basename
+      ext = Path[x].extension
+      name.gsub(/#{ext}/, "")
+    end
   end
 end

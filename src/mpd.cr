@@ -32,6 +32,8 @@ module MpdClient
   abstract def artists : Array(Peridot::MPD::Library::Artist)
   abstract def albums : Array(Peridot::MPD::Library::Album)
   abstract def songs : Array(Peridot::MPD::Library::Song)
+  abstract def playlists : Array(String)
+  abstract def playlist_load(name : String) : Void
 end
 
 struct Peridot::MPD
@@ -151,6 +153,10 @@ struct Peridot::MPD
     @queue.length
   end
 
+  def playlist_load(name : String) : Void
+    LibMpdClient.mpd_run_load(@connection, name)
+  end
+
   def queue_add(uri : String) : Void
     @queue.add(uri)
   end
@@ -169,6 +175,10 @@ struct Peridot::MPD
 
   def songs : Array(Peridot::MPD::Library::Song)
     @library.songs
+  end
+
+  def playlists : Array(String)
+    @library.playlists
   end
 
   def increase_volume : Void
