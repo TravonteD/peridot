@@ -20,6 +20,8 @@ def main
     ev = ui.poll
 
     case ev.type
+    when Termbox::EVENT_RESIZE
+      ui.resize
     when Termbox::EVENT_KEY
       case ev.key
       when Termbox::KEY_CTRL_C, Termbox::KEY_CTRL_D

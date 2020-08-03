@@ -46,6 +46,20 @@ class Peridot::UI
     @w.render
   end
 
+  # Known Issue: Playlist windows border breaks at very short heights
+  def resize
+    self.redraw
+    new_dimensions = self.calculate_window_dimensions
+    @windows[:library].resize(new_dimensions[:library])
+    @windows[:status].resize(new_dimensions[:status])
+    @windows[:playlist].resize(new_dimensions[:playlist])
+    @windows[:queue].resize(new_dimensions[:queue])
+    @windows[:song].resize(new_dimensions[:queue])
+    @windows[:album].resize(new_dimensions[:queue])
+    @windows[:artist].resize(new_dimensions[:queue])
+    @border = Border.new(@w)
+  end
+
   def poll
     @w.peek(1000)
   end
@@ -216,6 +230,14 @@ class Peridot::UI::Window
     @lines = lines
     @selected_line = -1
     @filtered = false
+  end
+
+  def resize(dimensions)
+    @container.pivot = Position.new(dimensions[:x], dimensions[:y])
+    @container.width = dimensions[:w]
+    @container.height = dimensions[:h]
+    @border = Border.new(container)
+    self.draw
   end
 
   def draw
