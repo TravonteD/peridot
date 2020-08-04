@@ -58,6 +58,7 @@ class Peridot::UI
     @windows[:album].resize(new_dimensions[:queue])
     @windows[:artist].resize(new_dimensions[:queue])
     @border = Border.new(@w)
+    self.select_window(@current_window.not_nil!)
   end
 
   def poll
