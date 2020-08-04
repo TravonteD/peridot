@@ -44,6 +44,10 @@ struct Peridot::MPD
 
   def initialize(host : String, port : Int32)
     @connection = LibMpdClient.mpd_connection_new(host, port, 0)
+    if LibMpdClient.mpd_connection_get_error(@connection) != LibMpdClient::MpdError::MPD_ERROR_SUCCESS
+      p "ERROR: Unable to connect to server at #{host}:#{port}"
+      exit 1
+    end
     @library = Library.new(@connection)
     @queue = Queue.new(@connection)
     @library.init
