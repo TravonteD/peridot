@@ -165,7 +165,7 @@ class Peridot::UI
         nil
     end
     unfilter_command = Proc(Nil).new do
-      return if @current_window != @primary_window
+      return if @current_window != @primary_window || !@windows[@current_window].filtered?
       next_window = case @primary_window.not_nil!
                     when :album
                       :artist
@@ -426,6 +426,7 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
 
   def filter(album_name : String)
     @filtered = true
+    @selected_line = 0
     @songs = @songs.select { |x| x.album == album_name }
     @lines = formatted_songs
     @title = "Songs (#{album_name})"
@@ -434,6 +435,7 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
 
   def unfilter
     @filtered = false
+    @selected_line = 0
     @songs = @mpd.songs.sort { |a, b| a.title <=> b.title }.as(Array(Peridot::MPD::Library::Song))
     @lines = formatted_songs
     @title = "Songs"
@@ -460,6 +462,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
 
   def filter(artist_name : String)
     @filtered = true
+    @selected_line = 0
     @albums = @albums.select { |x| x.artists.map(&.name).includes?(artist_name) }
     @lines = formatted_albums
     @title = "Albums (#{artist_name})"
@@ -468,6 +471,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
 
   def unfilter
     @filtered = false
+    @selected_line = 0
     @albums = @mpd.albums.sort { |a, b| a.name <=> b.name }.as(Array(Peridot::MPD::Library::Album))
     @lines = formatted_albums
     @title = "Albums"

@@ -1,7 +1,7 @@
+require "log"
 require "./ui"
 require "./mpd"
 require "./config"
-require "log"
 
 Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
 CONFIG = Peridot::Config.parse(File.read("test_config.yml"))
