@@ -1,5 +1,37 @@
 require "yaml"
 
+DEFAULT_CONFIG= <<-END
+---
+keys:
+  "move_down": "j"
+  "move_up": "k"
+  "previous": "<"
+  "next": ">"
+  "toggle_pause": "p"
+  "stop": "s"
+  "toggle_repeat": "r"
+  "toggle_random": "z"
+  "toggle_single": "y"
+  "toggle_consume": "R"
+  "volume_up": "+"
+  "volume_down": "-"
+  "seek_forward": "f"
+  "seek_backward": "b"
+  "queue_remove": "D"
+  "filter": "l"
+  "unfilter": "h"
+
+colors:
+  foreground: 8
+  background: 0
+  foreground_select: 3
+  background_select: 0
+
+server:
+  host: "localhost"
+  port: 6600
+END
+
 struct Server
   include YAML::Serializable
 

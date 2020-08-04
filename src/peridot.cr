@@ -4,7 +4,11 @@ require "./mpd"
 require "./config"
 
 Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
-CONFIG = Peridot::Config.parse(File.read("test_config.yml"))
+CONFIG = if File.exists?("test_config.yml")
+           Peridot::Config.parse(File.read("test_config.yml"))
+         else
+           Peridot::Config.parse(DEFAULT_CONFIG)
+         end
 
 def main
   mpd = Peridot::MPD.new(CONFIG.server.host, CONFIG.server.port)
