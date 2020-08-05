@@ -1,11 +1,17 @@
 require "log"
+require "file_utils"
+require "option_parser"
 require "./ui"
 require "./mpd"
 require "./config"
 
-CONFIG_FILE = (ENV.has_key?("XDG_CONFIG_HOME")) ? ENV["XDG_CONFIG_HOME"] + "/peridot/config.yml" : ENV["HOME"] + "/.config/peridot/config.yml"
+CONFIG_DIR = (ENV.has_key?("XDG_CONFIG_HOME")) ? ENV["XDG_CONFIG_HOME"] + "/peridot": ENV["HOME"] + "/.config/peridot"
+CONFIG_FILE = CONFIG_DIR + "/config.yml"
+LOG_FILE = CONFIG_DIR + "/debug.log"
 
-Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
+FileUtils.mkdir_p(CONFIG_DIR) unless Dir.exists?(CONFIG_DIR)
+Log.setup(:debug, Log::IOBackend.new(File.new(LOG_FILE, "w")))
+
 CONFIG = if File.exists?(CONFIG_FILE)
            begin
              Peridot::Config.parse(File.read(CONFIG_FILE))
@@ -79,6 +85,19 @@ def main
   end
 ensure
   ui.shutdown if ui
+end
+
+OptionParser.parse do |parser|
+  parser.banner = "Usage: peridot [arguments]"
+  parser.on("-h", "--help", "Show this help") do
+    p parser
+    exit
+  end
+  parser.invalid_option do |flag|
+    STDERR.puts "ERROR: #{flag} is not a valid option."
+    STDERR.puts parser
+    exit 1
+  end
 end
 
 main
