@@ -3,9 +3,16 @@ require "./ui"
 require "./mpd"
 require "./config"
 
+CONFIG_FILE = (ENV.has_key?("XDG_CONFIG_HOME")) ? ENV["XDG_CONFIG_HOME"] + "/peridot/config.yml" : ENV["HOME"] + "/.config/peridot/config.yml"
+
 Log.setup(:debug, Log::IOBackend.new(File.new("debug.log", "w")))
-CONFIG = if File.exists?("test_config.yml")
-           Peridot::Config.parse(File.read("test_config.yml"))
+CONFIG = if File.exists?(CONFIG_FILE)
+           begin
+             Peridot::Config.parse(File.read(CONFIG_FILE))
+           rescue e : YAML::ParseException
+             p e.message
+             exit 1
+           end
          else
            Peridot::Config.parse(DEFAULT_CONFIG)
          end
