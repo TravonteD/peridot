@@ -318,6 +318,9 @@ class Peridot::UI::Window
   def play
   end
 
+  def add
+  end
+
   def filter(arg)
   end
 
@@ -424,8 +427,12 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
   end
 
   def play
-    @mpd.queue_add(@songs[@selected_line].uri)
+    self.add
     @mpd.play(UInt32.new(@mpd.queue_length - 1))
+  end
+
+  def add 
+    @mpd.queue_add(@songs[@selected_line].uri)
   end
 
   def filter(album_name : String)
@@ -464,6 +471,11 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
     @mpd.play(UInt32.new(@mpd.queue_length - (songs.size)))
   end
 
+  def add
+    songs = @albums[@selected_line].songs
+    songs.each { |x| @mpd.queue_add(x.uri) }
+  end
+
   def filter(artist_name : String)
     @filtered = true
     @selected_line = 0
@@ -500,6 +512,11 @@ class Peridot::UI::ArtistWindow < Peridot::UI::Window
     @mpd.play(@mpd.queue_length - (songs.size))
   end
 
+  def add
+    songs = @artists[@selected_line].songs
+    songs.each { |x| @mpd.queue_add(x.uri) }
+  end
+
   private def formatted_artists
     @artists.map { |x| format_line_margin("#{x.name}", "", @dimensions[:w]) }
   end
@@ -513,11 +530,15 @@ class Peridot::UI::PlaylistWindow < Peridot::UI::Window
 
   def play
     before_length = @mpd.queue_length
-    playlist_name = @lines[@selected_line]
-    @mpd.playlist_load(playlist_name)
+    self.add
     after_length = @mpd.queue_length
     playlist_length = after_length - before_length
     @mpd.play(UInt32.new(after_length - playlist_length))
+  end
+
+  def add
+    playlist_name = @lines[@selected_line]
+    @mpd.playlist_load(playlist_name)
   end
 
   private def formatted_playlist

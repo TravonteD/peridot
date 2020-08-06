@@ -169,6 +169,21 @@ describe Peridot::UI::SongWindow do
     end
   end
 
+  describe "#add" do
+    it "adds the selected song to the queue" do
+      client = DummyMpdClient.new
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::SongWindow.new(client, dimensions)
+      window.selected_line = 0
+
+      window.add
+
+      expected = {true, "test_uri"}
+      client.@added.should eq expected
+      client.@queue_length.should eq 1
+    end
+  end
+
   describe "#filter & #unfilter" do
     it "filters the songs based on the given album name" do
       song1 = Peridot::MPD::Library::Song.new("song1", "", "test_album", "")
@@ -228,6 +243,19 @@ describe Peridot::UI::AlbumWindow do
     end
   end
 
+  describe "#add" do
+    it "adds the selected albums songs to the queue" do
+      client = DummyMpdClient.new
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::AlbumWindow.new(client, dimensions)
+      window.selected_line = 0
+
+      window.add
+
+      client.@queue_length.should eq 2
+    end
+  end
+
   describe "#current_line" do
     it "returns the name of the selected album" do
       client = DummyMpdClient.new
@@ -280,30 +308,42 @@ describe Peridot::UI::ArtistWindow do
   end
 
   describe "#play" do
-      it "adds the selected artists songs to the queue" do
-        client = DummyMpdClient.new
-        dimensions = {x: 1, y: 1, w: 1, h: 1}
-        window = Peridot::UI::ArtistWindow.new(client, dimensions)
-        window.selected_line = 0
+    it "adds the selected artists songs to the queue" do
+      client = DummyMpdClient.new
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::ArtistWindow.new(client, dimensions)
+      window.selected_line = 0
 
-        window.play
+      window.play
 
-        client.@queue_length.should eq 2
-      end
+      client.@queue_length.should eq 2
+    end
 
-      it "plays the first song that was added" do
-        client = DummyMpdClient.new
-        dimensions = {x: 1, y: 1, w: 1, h: 1}
-        window = Peridot::UI::ArtistWindow.new(client, dimensions)
-        window.selected_line = 0
+    it "plays the first song that was added" do
+      client = DummyMpdClient.new
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::ArtistWindow.new(client, dimensions)
+      window.selected_line = 0
 
-        window.play
+      window.play
 
-        expected = {true, 0}
-        client.@played.should eq expected
-      end
+      expected = {true, 0}
+      client.@played.should eq expected
+    end
   end
 
+  describe "#add" do
+    it "adds the selected artists songs to the queue" do
+      client = DummyMpdClient.new
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::ArtistWindow.new(client, dimensions)
+      window.selected_line = 0
+
+      window.add
+
+      client.@queue_length.should eq 2
+    end
+  end
   describe "#current_line" do
     it "returns the name of the selected artist" do
       client = DummyMpdClient.new
@@ -326,28 +366,42 @@ describe Peridot::UI::PlaylistWindow do
   end
 
   describe "#play" do
-      it "adds the selected artists songs to the queue" do
-        client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
-        dimensions = {x: 1, y: 1, w: 1, h: 1}
-        window = Peridot::UI::PlaylistWindow.new(client, dimensions)
-        window.selected_line = 0
+    it "adds the selected artists songs to the queue" do
+      client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::PlaylistWindow.new(client, dimensions)
+      window.selected_line = 0
 
-        window.play
+      window.play
 
-        expected = {true, "test_playlist0"}
-        client.@playlist_loaded.should eq expected
-      end
+      expected = {true, "test_playlist0"}
+      client.@playlist_loaded.should eq expected
+    end
 
-      it "plays the first song in the playlist" do
-        client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
-        dimensions = {x: 1, y: 1, w: 1, h: 1}
-        window = Peridot::UI::PlaylistWindow.new(client, dimensions)
-        window.selected_line = 0
+    it "plays the first song in the playlist" do
+      client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::PlaylistWindow.new(client, dimensions)
+      window.selected_line = 0
 
-        window.play
+      window.play
 
-        expected = {true, 0}
-        client.@played.should eq expected
-      end
+      expected = {true, 0}
+      client.@played.should eq expected
+    end
+  end
+
+  describe "#add" do
+    it "adds the selected artists songs to the queue" do
+      client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::PlaylistWindow.new(client, dimensions)
+      window.selected_line = 0
+
+      window.add
+
+      expected = {true, "test_playlist0"}
+      client.@playlist_loaded.should eq expected
+    end
   end
 end

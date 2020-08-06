@@ -43,13 +43,19 @@ def main
       case ev.key
       when Termbox::KEY_CTRL_C, Termbox::KEY_CTRL_D
         break
+      when Termbox::KEY_SPACE
+        case ui.current_window
+        when :queue, :song, :album, :playlist
+          ui.windows[ui.current_window].add
+        when :artist
+          ui.windows[:artist].add
+        end
       when Termbox::KEY_ENTER
         case ui.current_window
         when :queue, :song, :album, :playlist
           ui.windows[ui.current_window].play
         when :artist
           ui.windows[:artist].play
-          ui.windows[:queue].update
         when :library
           selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase
           case selection
