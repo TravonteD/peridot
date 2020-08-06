@@ -130,6 +130,20 @@ describe Peridot::UI::QueueWindow do
       end
     end
   end
+
+  describe "clear" do
+    it "empties the queue" do
+      client = DummyMpdClient.new(queue_length: 2)
+      dimensions = {x: 1, y: 1, w: 1, h: 1}
+      window = Peridot::UI::QueueWindow.new(client, dimensions)
+      window.selected_line = 1
+
+      window.clear
+
+      window.selected_line.should eq 0
+      client.@queue_length.should eq 0
+    end
+  end
 end
 
 describe Peridot::UI::SongWindow do

@@ -21,6 +21,7 @@ keys:
   seek_forward: "f"
   seek_backward: "b"
   queue_remove: "D"
+  queue_clear: "c"
   filter: "l"
   unfilter: "h"
 
@@ -63,6 +64,7 @@ struct Keybinding::Format
     "seek_forward",
     "seek_backward",
     "queue_remove",
+    "queue_clear",
     "filter",
     "unfilter",
   ]

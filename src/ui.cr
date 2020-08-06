@@ -201,6 +201,7 @@ class Peridot::UI
       "seek_forward" => ->{ @mpd.seek_forward },
       "seek_backward" => ->{ @mpd.seek_backward },
       "queue_remove" => ->{ @windows[:queue].as(Peridot::UI::QueueWindow).remove },
+      "queue_clear" => ->{ @windows[:queue].as(Peridot::UI::QueueWindow).clear },
       "filter" => filter_command,
       "unfilter" => unfilter_command
      }.as(Hash(String, Proc(Nil)))
@@ -245,10 +246,10 @@ class Peridot::UI::Window
   end
 
   def draw
+    @container.empty
+    @container << @border
+    add_title
     unless @lines.empty?
-      @container.empty
-      @container << @border
-      add_title
       if @selected_line >= 0
         write_lines(@lines, @selected_line)
       else
@@ -407,6 +408,11 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
 
     # Move up if deleting the last item in the queue
     @selected_line -= 1 unless @selected_line.zero?
+  end
+
+  def clear : Void
+    @mpd.queue_clear
+    @selected_line = 0
   end
 
   def update
