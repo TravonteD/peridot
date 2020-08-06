@@ -246,9 +246,14 @@ struct Peridot::MPD::Queue
     (0..self.length - 1).each do |i|
       song = LibMpdClient.mpd_run_get_queue_song_pos(@connection, i)
       uri = String.new(LibMpdClient.mpd_song_get_uri(song))
-      title = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_TITLE, 0))
-      album = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ALBUM, 0))
-      artist = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ARTIST, 0))
+
+      title = LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_TITLE, 0)
+      album = LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ALBUM, 0)
+      artist = LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ARTIST, 0)
+
+      title = (title.null?) ? "-" : String.new(title)
+      album = (album.null?) ? "" : String.new(album)
+      artist = (artist.null?) ? "" : String.new(artist)
       songs << Peridot::MPD::Library::Song.new(uri, title, album, artist)
     end
     songs
