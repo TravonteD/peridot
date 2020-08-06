@@ -40,9 +40,31 @@ struct Server
 end
 
 struct Keybinding::Format
+  @@valid_commands = [
+      "move_up",
+      "move_down",
+      "play",
+      "toggle_pause",
+      "stop",
+      "next",
+      "previous",
+      "toggle_repeat",
+      "toggle_single",
+      "toggle_consume",
+      "toggle_random",
+      "volume_up",
+      "volume_down",
+      "seek_forward",
+      "seek_backward",
+      "queue_remove",
+      "filter",
+      "unfilter",
+  ]
+
   def self.from_yaml(ctx : YAML::ParseContext, node : YAML::Nodes::Node) : Hash(String, String)
     result = {} of String => String
     node.as(YAML::Nodes::Mapping).each do |k, v|
+      next unless @@valid_commands.includes?(k.as(YAML::Nodes::Scalar).value)
       result[v.as(YAML::Nodes::Scalar).value] = k.as(YAML::Nodes::Scalar).value
     end
     result
