@@ -43,12 +43,6 @@ def main
       case ev.key
       when Termbox::KEY_CTRL_C, Termbox::KEY_CTRL_D
         break
-      when Termbox::KEY_CTRL_L
-        ui.select_window(:library)
-      when Termbox::KEY_CTRL_Q
-        ui.select_window(ui.primary_window.not_nil!)
-      when Termbox::KEY_CTRL_P
-        ui.select_window(:playlist)
       when Termbox::KEY_ENTER
         case ui.current_window
         when :queue, :song, :album, :playlist

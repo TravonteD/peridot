@@ -25,9 +25,9 @@ Run the command `peridot`
 
 ### Keybindings
 - "quit": "q"
-- "jump to library window": "CTRL-l"
-- "jump to primary window": "CTRL-q"
-- "jump to play-list window": "CTRL-p"
+- "focus_primary_window": "1"
+- "focus_library_window": "2"
+- "focus_playlist_window": "3"
 - "move_down": "j"
 - "move_up": "k"
 - "previous": "<"

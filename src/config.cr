@@ -3,6 +3,9 @@ require "yaml"
 DEFAULT_CONFIG= <<-END
 ---
 keys:
+  focus_primary_window: "1"
+  focus_library_window: "2"
+  focus_playlist_window: "3"
   move_down: "j"
   move_up: "k"
   previous: "<"
@@ -41,24 +44,27 @@ end
 
 struct Keybinding::Format
   @@valid_commands = [
-      "move_up",
-      "move_down",
-      "play",
-      "toggle_pause",
-      "stop",
-      "next",
-      "previous",
-      "toggle_repeat",
-      "toggle_single",
-      "toggle_consume",
-      "toggle_random",
-      "volume_up",
-      "volume_down",
-      "seek_forward",
-      "seek_backward",
-      "queue_remove",
-      "filter",
-      "unfilter",
+    "focus_primary_window",
+    "focus_library_window",
+    "focus_playlist_window",
+    "move_up",
+    "move_down",
+    "play",
+    "toggle_pause",
+    "stop",
+    "next",
+    "previous",
+    "toggle_repeat",
+    "toggle_single",
+    "toggle_consume",
+    "toggle_random",
+    "volume_up",
+    "volume_down",
+    "seek_forward",
+    "seek_backward",
+    "queue_remove",
+    "filter",
+    "unfilter",
   ]
 
   def self.from_yaml(ctx : YAML::ParseContext, node : YAML::Nodes::Node) : Hash(String, String)

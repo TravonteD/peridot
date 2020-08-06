@@ -69,7 +69,7 @@ class Peridot::UI
     @w.shutdown
   end
 
-  def select_window(name : Symbol)
+  def select_window(name : Symbol) : Void
     @windows.each do |k, v|
       v.deselect
       v.select if k == name
@@ -182,6 +182,9 @@ class Peridot::UI
         nil
     end
     @commands = {
+      "focus_primary_window" => ->{ self.select_window(@primary_window.not_nil!) },
+      "focus_library_window" => ->{ self.select_window(:library) },
+      "focus_playlist_window" => ->{ self.select_window(:playlist) },
       "move_up" => ->{ self.move_up },
       "move_down" => ->{ self.move_down },
       "play" => ->{ @mpd.play },
