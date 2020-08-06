@@ -4,7 +4,7 @@ require "../src/config.cr"
 dummy_config = <<-END
 ---
 keys:
-  move_down: "j" 
+  move_down: "j"
   move_up: "k"
 colors:
   foreground: 8
@@ -17,7 +17,7 @@ END
 dummy_config_with_key_error = <<-END
 ---
 keys:
-  move_down: "j" 
+  move_down: "j"
   move_up: "k"
   invalid_command: "a"
 colors:
@@ -39,7 +39,7 @@ describe Peridot::Config do
 
     it "ignores keybindings to invalid_commands" do
       config = Peridot::Config.parse(dummy_config_with_key_error)
-      
+
       config.keys.keys.should_not contain("a")
     end
 

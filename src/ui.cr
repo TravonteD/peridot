@@ -384,10 +384,10 @@ class Peridot::UI::StatusWindow < Peridot::UI::Window
     total_minutes, total_seconds = total_time.divmod(60)
     elapsed_minutes, elapsed_seconds = elapsed_time.divmod(60)
     diff_minutes, diff_seconds = diff_time.divmod(60)
-    sprintf("%s:%s/%s:%s (-%s:%s)", 
-            elapsed_minutes, 
-            (elapsed_seconds < 10) ? "0#{elapsed_seconds}" : elapsed_seconds, 
-            total_minutes, 
+    sprintf("%s:%s/%s:%s (-%s:%s)",
+            elapsed_minutes,
+            (elapsed_seconds < 10) ? "0#{elapsed_seconds}" : elapsed_seconds,
+            total_minutes,
             (total_seconds < 10) ? "0#{total_seconds}" : total_seconds,
             diff_minutes,
             (diff_seconds < 10) ? "0#{diff_seconds}" : diff_seconds,)
@@ -437,7 +437,7 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
     @mpd.play(UInt32.new(@mpd.queue_length - 1))
   end
 
-  def add 
+  def add
     @mpd.queue_add(@songs[@selected_line].uri)
   end
 
