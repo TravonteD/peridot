@@ -2,6 +2,8 @@
 
 A modern terminal MPD (Music Player Daemon) client
 
+![Screenshot](peridot.png)
+
 ## Installation
 
 ### Dependencies
