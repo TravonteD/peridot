@@ -102,14 +102,14 @@ describe Peridot::UI::QueueWindow do
     window.@lines.should eq expected
   end
 
-  describe "#action" do
+  describe "#play" do
     it "plays the selected song" do
       client = DummyMpdClient.new
       dimensions = {x: 1, y: 1, w: 1, h: 1}
       window = Peridot::UI::QueueWindow.new(client, dimensions)
       window.selected_line = 1
 
-      window.action
+      window.play
 
       expected = {true, 1}
       client.@played.should eq expected
@@ -142,14 +142,14 @@ describe Peridot::UI::SongWindow do
     window.@lines.should eq expected
   end
 
-  describe "#action" do
+  describe "#play" do
     it "adds the selected song to the queue" do
       client = DummyMpdClient.new
       dimensions = {x: 1, y: 1, w: 1, h: 1}
       window = Peridot::UI::SongWindow.new(client, dimensions)
       window.selected_line = 0
 
-      window.action
+      window.play
 
       expected = {true, "test_uri"}
       client.@added.should eq expected
@@ -162,7 +162,7 @@ describe Peridot::UI::SongWindow do
       window = Peridot::UI::SongWindow.new(client, dimensions)
       window.selected_line = 0
 
-      window.action
+      window.play
 
       expected = {true, 0}
       client.@played.should eq expected
@@ -203,14 +203,14 @@ describe Peridot::UI::AlbumWindow do
     window.@lines.should eq expected
   end
 
-  describe "#action" do
+  describe "#play" do
     it "adds the selected albums songs to the queue" do
       client = DummyMpdClient.new
       dimensions = {x: 1, y: 1, w: 1, h: 1}
       window = Peridot::UI::AlbumWindow.new(client, dimensions)
       window.selected_line = 0
 
-      window.action
+      window.play
 
       client.@queue_length.should eq 2
     end
@@ -221,7 +221,7 @@ describe Peridot::UI::AlbumWindow do
       window = Peridot::UI::AlbumWindow.new(client, dimensions)
       window.selected_line = 0
 
-      window.action
+      window.play
 
       expected = {true, 0}
       client.@played.should eq expected
@@ -279,14 +279,14 @@ describe Peridot::UI::ArtistWindow do
     window.@lines.should eq expected
   end
 
-  describe "#action" do
+  describe "#play" do
       it "adds the selected artists songs to the queue" do
         client = DummyMpdClient.new
         dimensions = {x: 1, y: 1, w: 1, h: 1}
         window = Peridot::UI::ArtistWindow.new(client, dimensions)
         window.selected_line = 0
 
-        window.action
+        window.play
 
         client.@queue_length.should eq 2
       end
@@ -297,7 +297,7 @@ describe Peridot::UI::ArtistWindow do
         window = Peridot::UI::ArtistWindow.new(client, dimensions)
         window.selected_line = 0
 
-        window.action
+        window.play
 
         expected = {true, 0}
         client.@played.should eq expected
@@ -325,17 +325,29 @@ describe Peridot::UI::PlaylistWindow do
     window.@lines.should eq ["test_playlist", "test_playlist"]
   end
 
-  describe "#action" do
+  describe "#play" do
       it "adds the selected artists songs to the queue" do
         client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
         dimensions = {x: 1, y: 1, w: 1, h: 1}
         window = Peridot::UI::PlaylistWindow.new(client, dimensions)
         window.selected_line = 0
 
-        window.action
+        window.play
 
         expected = {true, "test_playlist0"}
         client.@playlist_loaded.should eq expected
+      end
+
+      it "plays the first song in the playlist" do
+        client = DummyMpdClient.new(playlists: ["test_playlist0", "test_playlist1"])
+        dimensions = {x: 1, y: 1, w: 1, h: 1}
+        window = Peridot::UI::PlaylistWindow.new(client, dimensions)
+        window.selected_line = 0
+
+        window.play
+
+        expected = {true, 0}
+        client.@played.should eq expected
       end
   end
 end

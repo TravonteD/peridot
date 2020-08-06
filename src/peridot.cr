@@ -46,9 +46,9 @@ def main
       when Termbox::KEY_ENTER
         case ui.current_window
         when :queue, :song, :album, :playlist
-          ui.windows[ui.current_window].action
+          ui.windows[ui.current_window].play
         when :artist
-          ui.windows[:artist].action
+          ui.windows[:artist].play
           ui.windows[:queue].update
         when :library
           selection = ui.windows[:library].lines[ui.windows[:library].selected_line].downcase

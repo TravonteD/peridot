@@ -315,7 +315,7 @@ class Peridot::UI::Window
   end
 
   # Defined Here to be overriden in child classes
-  def action
+  def play
   end
 
   def filter(arg)
@@ -395,7 +395,7 @@ class Peridot::UI::QueueWindow < Peridot::UI::Window
     super("Queue (#{@mpd.queue_length} Songs)", @dimensions, formatted_songs)
   end
 
-  def action
+  def play
     @mpd.play(UInt32.new(@selected_line))
   end
 
@@ -423,7 +423,7 @@ class Peridot::UI::SongWindow < Peridot::UI::Window
     super("Songs", @dimensions, formatted_songs)
   end
 
-  def action
+  def play
     @mpd.queue_add(@songs[@selected_line].uri)
     @mpd.play(UInt32.new(@mpd.queue_length - 1))
   end
@@ -457,7 +457,7 @@ class Peridot::UI::AlbumWindow < Peridot::UI::Window
     super("Albums", @dimensions, formatted_albums)
   end
 
-  def action
+  def play
     songs = @albums[@selected_line].songs
     songs.each { |x| @mpd.queue_add(x.uri) }
     # Play the first song
@@ -493,7 +493,7 @@ class Peridot::UI::ArtistWindow < Peridot::UI::Window
     super("Artists", @dimensions, formatted_artists)
   end
 
-  def action
+  def play
     songs = @artists[@selected_line].songs
     songs.each { |x| @mpd.queue_add(x.uri) }
     # Play the first song
@@ -511,9 +511,13 @@ class Peridot::UI::PlaylistWindow < Peridot::UI::Window
     super("Playlists", @dimensions, formatted_playlist)
   end
 
-  def action
+  def play
+    before_length = @mpd.queue_length
     playlist_name = @lines[@selected_line]
     @mpd.playlist_load(playlist_name)
+    after_length = @mpd.queue_length
+    playlist_length = after_length - before_length
+    @mpd.play(UInt32.new(after_length - playlist_length))
   end
 
   private def formatted_playlist

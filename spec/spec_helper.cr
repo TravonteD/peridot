@@ -77,6 +77,7 @@ class DummyMpdClient
 
   def playlist_load(name : String): Void
     @playlist_loaded = {true, name}
+    @queue_length += 1
   end
 
   def queue_add(uri : String) : Void
