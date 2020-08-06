@@ -16,9 +16,9 @@ A modern terminal MPD (Music Player Daemon) client
 ### From Source
 
 1. Install the dependencies from you package manager
-2. `cd` into the directory and run `shards install`
-3. run `shards build --release`
-4. The binary will be in the `bin/` directory link it to either `$HOME/.local/bin` or `/usr/local/bin`
+2. run `sudo make install`
+
+Note: If you'd like a different install directory just modify it in the Makefile
 
 ## Usage
 
