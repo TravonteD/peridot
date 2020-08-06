@@ -45,6 +45,7 @@ Run the command `peridot`
 - "seek_forward": "f"
 - "seek_backward": "b"
 - "queue_remove": "D"
+- "queue_clear": "c"
 - "filter": "l" # Drills down into the directory
 - "unfilter": "h" # Goes up the directory structure
 
