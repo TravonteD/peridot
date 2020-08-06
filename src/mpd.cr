@@ -327,9 +327,15 @@ struct Peridot::MPD::Library
 
   private def get_song(song : LibMpdClient::MpdSong*) : Peridot::MPD::Library::Song
     uri = String.new(LibMpdClient.mpd_song_get_uri(song))
-    title = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_TITLE, 0))
-    album = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ALBUM, 0))
-    artist = String.new(LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ARTIST, 0))
+
+    title = LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_TITLE, 0)
+    album = LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ALBUM, 0)
+    artist = LibMpdClient.mpd_song_get_tag(song, LibMpdClient::MpdTagType::MPD_TAG_ARTIST, 0)
+
+    title = (title.null?) ? "-" : String.new(title)
+    album = (album.null?) ? "" : String.new(album)
+    artist = (artist.null?) ? "" : String.new(artist)
+
     Peridot::MPD::Library::Song.new(uri, title, album, artist)
   end
 
