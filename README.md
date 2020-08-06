@@ -24,6 +24,8 @@ A modern terminal MPD (Music Player Daemon) client
 Run the command `peridot`
 
 ### Keybindings
+- "play the selection": "enter"*
+- "add the selection to list": "space"*
 - "quit": "q"
 - "focus_primary_window": "1"
 - "focus_library_window": "2"
@@ -45,6 +47,8 @@ Run the command `peridot`
 - "queue_remove": "D"
 - "filter": "l" # Drills down into the directory
 - "unfilter": "h" # Goes up the directory structure
+
+\*currently these cannot be remapped
 
 ## Development
 
