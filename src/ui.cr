@@ -150,7 +150,7 @@ class Peridot::UI
 
   private def create_commands
     filter_command = Proc(Nil).new do
-      return if @current_window != @primary_window
+      next if @current_window != @primary_window
       next_window = case @primary_window.not_nil!
                     when :artist
                       :album
@@ -159,14 +159,14 @@ class Peridot::UI
                     else
                       @primary_window
                     end
-        return if @primary_window == next_window
+        next if @primary_window == next_window
         @windows[next_window].filter(@windows[@current_window].current_line)
         self.select_window(next_window.not_nil!)
         @primary_window = next_window
         nil
     end
     unfilter_command = Proc(Nil).new do
-      return if @current_window != @primary_window || !@windows[@current_window].filtered?
+      next if @current_window != @primary_window || !@windows[@current_window].filtered?
       next_window = case @primary_window.not_nil!
                     when :album
                       :artist
@@ -175,7 +175,7 @@ class Peridot::UI
                     else
                       @primary_window
                     end
-        return if @primary_window == next_window
+        next if @primary_window == next_window
         @windows[@current_window].unfilter
         self.select_window(next_window.not_nil!)
         @primary_window = next_window
